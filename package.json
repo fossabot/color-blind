@@ -1,0 +1,9 @@
+{
+  "volo": {
+    "baseUrl": "www/js/lib",
+    "dependencies": {
+      "game-shim": "github:toji/game-shim/master",
+      "stats": "github:mrdoob/stats.js/master"
+    }
+  }
+}
