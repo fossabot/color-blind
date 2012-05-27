@@ -1,0 +1,104 @@
+<!DOCTYPE html>  <html> <head>   <title>relativity.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               relativity.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span><span class="nx">function</span><span class="p">(</span><span class="nx">require</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">var</span> <span class="nx">stats</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">world</span><span class="p">;</span>
+
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;game-shim&#39;</span><span class="p">);</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;stats&#39;</span><span class="p">);</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">);</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;box2d/javascript/Box2D/box2d&#39;</span><span class="p">);</span>
+
+
+  <span class="nv">stats = </span><span class="k">new</span> <span class="nx">Stats</span><span class="p">();</span>
+  <span class="nx">stats</span><span class="p">.</span><span class="nx">setMode</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="err">// 0: fps, 1: ms</span>
+
+  <span class="o">/</span><span class="err">/ Align top-left</span>
+  <span class="nv">stats.domElement.style.position = </span><span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+  <span class="nv">stats.domElement.style.left = </span><span class="s1">&#39;0px&#39;</span><span class="p">;</span>
+  <span class="nv">stats.domElement.style.top = </span><span class="s1">&#39;0px&#39;</span><span class="p">;</span>
+
+  <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">stats</span><span class="p">.</span><span class="nx">domElement</span><span class="p">);</span>
+
+  <span class="nv">canvas = </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">);</span>
+  <span class="nv">ctx = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+
+  <span class="nx">function</span> <span class="nx">init</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">var</span> <span class="nx">bodyDef</span><span class="p">,</span> <span class="nx">debugDraw</span><span class="p">,</span> <span class="nx">fixDef</span><span class="p">,</span> <span class="nx">SCALE</span><span class="p">;</span>
+
+      <span class="nv">world = </span><span class="k">new</span> <span class="nx">b2World</span><span class="p">(</span>
+              <span class="k">new</span> <span class="nx">b2Vec2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="err">// gravity</span>
+              <span class="kc">true</span> <span class="o">/</span><span class="err">/ allow sleep</span>
+     <span class="p">);</span>
+
+     <span class="nv">SCALE = </span><span class="mi">30</span><span class="p">;</span>
+
+     <span class="nv">fixDef = </span><span class="k">new</span> <span class="nx">b2FixtureDef</span><span class="p">();</span>
+
+     <span class="nv">fixDef.density     = </span><span class="mf">1.0</span><span class="p">;</span>
+     <span class="nv">fixDef.friction    = </span><span class="mf">0.5</span><span class="p">;</span>
+     <span class="nv">fixDef.restitution = </span><span class="mf">0.75</span><span class="p">;</span>
+
+     <span class="nv">bodyDef = </span><span class="k">new</span> <span class="nx">b2BodyDef</span><span class="p">();</span>
+
+     <span class="err">// create ground</span>
+     <span class="nv">bodyDef.type = </span><span class="nx">b2Body</span><span class="p">.</span><span class="nx">b2_staticBody</span><span class="p">;</span>
+
+     <span class="err">// positions the center of the object (not upper left!)</span>
+     <span class="nv">bodyDef.position.x = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ 2 /</span> <span class="nx">SCALE</span><span class="p">;</span>
+     <span class="nv">bodyDef.position.y = </span><span class="mi">7</span> <span class="o">/</span> <span class="nx">SCALE</span><span class="p">;</span>
+
+     <span class="nv">fixDef.shape = </span><span class="k">new</span> <span class="nx">b2PolygonShape</span><span class="p">();</span>
+
+     <span class="err">// half width, half height. eg actual height here is 1 unit</span>
+     <span class="nx">fixDef</span><span class="p">.</span><span class="nx">shape</span><span class="p">.</span><span class="nx">SetAsBox</span><span class="p">((</span><span class="mi">600</span> <span class="o">/</span> <span class="nx">SCALE</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span> <span class="o">/</span> <span class="nx">SCALE</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+     <span class="nx">world</span><span class="p">.</span><span class="nx">CreateBody</span><span class="p">(</span><span class="nx">bodyDef</span><span class="p">).</span><span class="nx">CreateFixture</span><span class="p">(</span><span class="nx">fixDef</span><span class="p">);</span>
+
+     <span class="err">// create some objects</span>
+     <span class="nv">bodyDef.type = </span><span class="nx">b2Body</span><span class="p">.</span><span class="nx">b2_dynamicBody</span><span class="p">;</span>
+
+     <span class="k">for</span> <span class="p">(</span><span class="nx">var</span> <span class="nv">i = </span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nv">fixDef.shape = </span><span class="k">new</span> <span class="nx">b2PolygonShape</span><span class="p">();</span>
+             <span class="nx">fixDef</span><span class="p">.</span><span class="nx">shape</span><span class="p">.</span><span class="nx">SetAsBox</span><span class="p">(</span>
+                     <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span> <span class="err">// half width</span>
+                     <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">/</span><span class="err">/ half height</span>
+            <span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nv">fixDef.shape = </span><span class="k">new</span> <span class="nx">b2CircleShape</span><span class="p">(</span>
+                    <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">/</span><span class="err">/ radius</span>
+            <span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nv">bodyDef.position.x = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">20</span><span class="p">;</span>
+        <span class="nv">bodyDef.position.y = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">20</span><span class="p">;</span>
+        <span class="nx">world</span><span class="p">.</span><span class="nx">CreateBody</span><span class="p">(</span><span class="nx">bodyDef</span><span class="p">).</span><span class="nx">CreateFixture</span><span class="p">(</span><span class="nx">fixDef</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nv">debugDraw = </span><span class="k">new</span> <span class="nx">b2DebugDraw</span><span class="p">();</span>
+    <span class="nx">debugDraw</span><span class="p">.</span><span class="nx">SetSprite</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">));</span>
+    <span class="nx">debugDraw</span><span class="p">.</span><span class="nx">SetDrawScale</span><span class="p">(</span><span class="nx">SCALE</span><span class="p">);</span>
+    <span class="nx">debugDraw</span><span class="p">.</span><span class="nx">SetFillAlpha</span><span class="p">(</span><span class="mf">0.3</span><span class="p">);</span>
+    <span class="nx">debugDraw</span><span class="p">.</span><span class="nx">SetLineThickness</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span>
+    <span class="nx">debugDraw</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">b2DebugDraw</span><span class="p">.</span><span class="nx">e_shapeBit</span> <span class="o">|</span> <span class="nx">b2DebugDraw</span><span class="p">.</span><span class="nx">e_jointBit</span><span class="p">);</span>
+    <span class="nx">world</span><span class="p">.</span><span class="nx">SetDebugDraw</span><span class="p">(</span><span class="nx">debugDraw</span><span class="p">);</span>
+
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">init</span><span class="p">,</span> <span class="mi">10000</span><span class="p">);</span>
+  <span class="p">}</span>
+
+
+  <span class="nx">function</span> <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">world</span><span class="p">.</span><span class="nx">Step</span><span class="p">(</span>
+              <span class="mi">1</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="err">// frame-rate</span>
+              <span class="mi">10</span><span class="p">,</span> <span class="err">// velocity iterations</span>
+              <span class="mi">10</span> <span class="o">/</span><span class="err">/ position iterations</span>
+      <span class="p">);</span>
+      <span class="nx">world</span><span class="p">.</span><span class="nx">DrawDebugData</span><span class="p">();</span>
+      <span class="nx">world</span><span class="p">.</span><span class="nx">ClearForces</span><span class="p">();</span>
+
+      <span class="nx">stats</span><span class="p">.</span><span class="nx">update</span><span class="p">();</span>
+      <span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">update</span><span class="p">);</span>
+ <span class="p">};</span> <span class="err">// update()</span>
+
+ <span class="nx">init</span><span class="p">();</span>
+ <span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">update</span><span class="p">);</span>
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

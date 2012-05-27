@@ -1,12 +1,22 @@
 {
-  "volo": {
-    "baseUrl": "www/js/lib",
-    "dependencies": {
-      "game-shim": "github:toji/game-shim/master",
-      "stats": "github:mrdoob/stats.js/master",
-      "box2d": "github:thinkpixellab/box2d/master",
-      "box2dWeb": "github:thinkpixellab/box2dWeb/master",
-      "box2d-js": "github:hrj/box2d-js/master"
-    }
+  "name": "relativity",
+  "version": "0.0.1",
+  "author": "Mr Axilus <esmith@projectaxil.us>",
+  "description": "A gravity focused 2D platformer.",
+  "main": "./lib/relativity.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mraxilus/relativity.git"
+  },
+  "keywords": [
+    "html", "game", "box2d", "gravity", "physics", "relative"
+  ],
+  "dependencies" : {},
+  "devDependencies": {
+    "vows"    :  "0.6.x"
+  },
+  "license": "MIT",
+  "engine": {
+    "node": ">=0.4"
   }
 }
