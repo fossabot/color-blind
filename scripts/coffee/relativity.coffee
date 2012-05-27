@@ -1,17 +1,3 @@
-
-stats = new Stats()
-stats.setMode 0 # 0: fps, 1: ms
-
-# Align top-left.
-stats.domElement.style.position = 'absolute'
-stats.domElement.style.left     = '150px'
-stats.domElement.style.top      = '15px'
-
-document.body.appendChild stats.domElement
-
-canvas = document.getElementById 'c'
-ctx    = canvas.getContext '2d'
-
 b2Vec2         = Box2D.Common.Math.b2Vec2
 b2BodyDef      = Box2D.Dynamics.b2BodyDef
 b2Body         = Box2D.Dynamics.b2Body
@@ -23,86 +9,176 @@ b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
 b2CircleShape  = Box2D.Collision.Shapes.b2CircleShape
 b2DebugDraw    = Box2D.Dynamics.b2DebugDraw
 
-world = {}
+
+SCALE = 30
+
+
+class Actor
+  constructor: (@body, @sprite) ->
+
+  draw: (ctx) ->
+    x = @body.GetPosition().x * SCALE
+    y = @body.GetPosition().y * SCALE
+    angle = @body.GetAngle()
+
+    ctx.save()
+
+    ctx.translate x, y
+    ctx.rotate angle
+    ctx.drawImage @sprite, -15, -15, 30, 30
+
+    ctx.restore()
+
+  update: () ->
+
+class AssetManager
+  constructor: (@downloadQueue = []) ->
+    @cache        = {}
+    @successCount = 0
+    @errorCount   = 0
+
+  downloadAll: (callback) ->
+    if @downloadQueue.length is 0
+      callback()
+
+    for path in @downloadQueue
+      image = new Image()
+      that  = @
+
+      image.addEventListener 'load', (() ->
+        console.log @src + ' is loaded.'
+        @successCount += 1
+        # if that.isDone()
+        #   callback()
+        ), false
+
+      image.addEventListener 'error', (() ->
+        @errorCount += 1
+        # if that.isDone()
+        #   callback()
+        ), false
+
+      image.src = path
+      @cache[path] = image
+    callback()
+
+  getAsset: (path) ->
+    @cache[path]
+
+  queueDownload: (path) ->
+    @downloadQueue.push path
+
+
+actor = {}
+assetManager = new AssetManager()
+canvas = document.getElementById 'game'
+ctx    = canvas.getContext '2d'
+defs   =
+         body:    new b2BodyDef()
+         fixture: new b2FixtureDef()
+stats  = new Stats()
+world  = new b2World(new b2Vec2(5, 10), true) # gravity, allow sleep
+
+
+# window.addEventListener 'load', init, false
 
 init = () ->
-  world = new b2World(new b2Vec2(0, 10), true) # gravity, allow sleep
+  stats.setMode 0 # 0: fps, 1: ms
 
-  SCALE = 30
+  # Align top-left.
+  stats.domElement.style.position = 'absolute'
+  stats.domElement.style.left     = '150px'
+  stats.domElement.style.top      = '15px'
 
-  fixDef = new b2FixtureDef()
+  document.body.appendChild stats.domElement
 
-  fixDef.density     = 1.0
-  fixDef.friction    = 0.5
-  fixDef.restitution = 0.75
+  assetManager.queueDownload 'assets/images/ball.png'
 
-  bodyDef = new b2BodyDef()
+  assetManager.downloadAll () ->
+    setup()
+    requestAnimationFrame update
+# init()
+
+setup = () ->
+  setupWalls()
+  setupObjects()
+
+# setup()
+
+setupWalls = () ->
+  defs.fixture.density     = 1.0
+  defs.fixture.friction    = 1.0
+  defs.fixture.restitution = 0.8
 
   # Create ground.
-  bodyDef.type = b2Body.b2_staticBody
+  defs.body.type = b2Body.b2_staticBody
 
   # Positions the center of the object (not upper left!).
-  bodyDef.position.x = (canvas.width / 2) / SCALE
-  bodyDef.position.y = 470 / SCALE
+  defs.body.position.x = (canvas.width / 2) / SCALE
+  defs.body.position.y = 470 / SCALE
 
-  fixDef.shape = new b2PolygonShape()
+  defs.fixture.shape = new b2PolygonShape()
 
   # Half width, half height. eg actual height here is 1 unit.
-  fixDef.shape.SetAsBox (640 / SCALE) / 2, (10 / SCALE) / 2
-  world.CreateBody(bodyDef).CreateFixture(fixDef)
+  defs.fixture.shape.SetAsBox (640 / SCALE) / 2, (10 / SCALE) / 2
+  world.CreateBody(defs.body).CreateFixture(defs.fixture)
 
   # Create walls.
-  fixDef.shape.SetAsBox (10 / SCALE) / 2, (480 / SCALE) / 2
+  defs.fixture.shape.SetAsBox (10 / SCALE) / 2, (480 / SCALE) / 2
 
   # Create left wall.
-  bodyDef.position.x = 5 / SCALE
-  bodyDef.position.y = (canvas.height / 2) / SCALE
-  world.CreateBody(bodyDef).CreateFixture(fixDef)
+  defs.body.position.x = 5 / SCALE
+  defs.body.position.y = (canvas.height / 2) / SCALE
+  world.CreateBody(defs.body).CreateFixture(defs.fixture)
 
 
   # Create right wall.
-  bodyDef.position.x = (canvas.width - 5) / SCALE
-  bodyDef.position.y = (canvas.height / 2) / SCALE
-  world.CreateBody(bodyDef).CreateFixture(fixDef)
+  defs.body.position.x = (canvas.width - 5) / SCALE
+  defs.body.position.y = (canvas.height / 2) / SCALE
+  world.CreateBody(defs.body).CreateFixture(defs.fixture)
+# setupWalls()
 
+setupObjects = () ->
   # create some objects
-  bodyDef.type = b2Body.b2_dynamicBody
+  defs.body.type = b2Body.b2_dynamicBody
 
-  for i in [0..20]
-    if Math.random() > 0.5
-           fixDef.shape = new b2PolygonShape()
-           fixDef.shape.SetAsBox Math.random() + 0.1, # half width
-                                 Math.random() + 0.1 # half height
-    else
-      fixDef.shape = new b2CircleShape Math.random() + 0.1 # radius
+  defs.fixture.shape = new b2CircleShape 30 / SCALE # radius
 
-    bodyDef.position.x = Math.random() * 640 / SCALE
-    bodyDef.position.y = ((Math.random() * 240) - 100) / SCALE
-    world.CreateBody(bodyDef).CreateFixture(fixDef)
+  defs.body.position.x = Math.random() * 640 / SCALE
+  defs.body.position.y = ((Math.random() * 240) - 100) / SCALE
+  actorBody = world.CreateBody(defs.body)
+  actorBody.CreateFixture(defs.fixture)
 
-  debugDraw = new b2DebugDraw()
-  debugDraw.SetSprite document.getElementById('c').getContext('2d')
-  debugDraw.SetDrawScale SCALE
-  debugDraw.SetFillAlpha 0.3
-  debugDraw.SetLineThickness 1.0
-  debugDraw.SetFlags b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit
-  world.SetDebugDraw debugDraw
+  actor = new Actor actorBody, assetManager.getAsset('assets/images/ball.png')
 
-  setTimeout init, 10000
-# init()
+# setupObjects()
 
 update = () ->
+  stats.begin()
+
   world.Step 1 / 60, 10, 10 # frame-rate, velocity and position iterations
-  draw()
   world.ClearForces()
 
-  stats.update()
+  draw()
+
+  stats.end()
   requestAnimationFrame update
 # update()
 
 draw = () ->
-  world.DrawDebugData()
+  clearCanvas()
+  actor.draw(ctx)
 # draw()
 
+clearCanvas = () ->
+  # // Store the current transformation matrix
+  ctx.save()
+
+  # // Use the identity matrix while clearing the canvas
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  # // Restore the transform
+  ctx.restore();
+
 init()
-requestAnimationFrame update
