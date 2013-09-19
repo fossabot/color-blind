@@ -1,4 +1,4 @@
-# [video game][1] ![build status][2]
+# [video game][1] [![build status][2]][3]
 *an attempt at video game development*
 
 ## usage
@@ -8,7 +8,7 @@
 ## documentation
 
 ## license
-copyright © mr axilus [![flattr this][3]][4]
+copyright © mr axilus <a class="coinbase-button" data-code="c060c048abd9fe7b4f36021738451bed" data-button-style="donation_small" href="https://coinbase.com/checkouts/c060c048abd9fe7b4f36021738451bed">donate bitcoins</a><script src="https://coinbase.com/assets/button.js" type="text/javascript"></script>
 
 permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "software"), to deal in
@@ -29,5 +29,4 @@ connection with the software or the use or other dealings in the software.
 
 [1]: mraxil.us "video game"
 [2]: https://secure.travis-ci.org/mraxilus/video-game.png?branch=master
-[3]: http://api.flattr.com/button/flattr-badge-large.png
-[4]: https://flattr.com/profile/mraxilus
+[3]: https://secure.travis-ci.org/mraxilus/video-game.png?branch=master
