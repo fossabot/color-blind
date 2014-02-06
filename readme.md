@@ -6,6 +6,12 @@
 ## purpose
 
 ## documentation
+- http://www.pyglet.org/
+- http://www.pymunk.org/en/latest/index.html
+- https://code.google.com/p/py-lepton/
+
+- http://www.pymunk.org/en/latest/tutorials/SlideAndPinJoint.html
+- http://pyratesarecool.appspot.com/Integrating_Pyglet_and_Pymunk
 
 ## license
 copyright © mr axilus <a class="coinbase-button" data-code="c060c048abd9fe7b4f36021738451bed" data-button-style="donation_small" href="https://coinbase.com/checkouts/c060c048abd9fe7b4f36021738451bed">donate bitcoins</a><script src="https://coinbase.com/assets/button.js" type="text/javascript"></script>
