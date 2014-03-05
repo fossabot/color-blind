@@ -9,7 +9,7 @@
 - http://www.pyglet.org/
 - http://www.pymunk.org/en/latest/index.html
 - https://code.google.com/p/py-lepton/
-
+- http://codeschool.org/game-programming/
 - http://www.pymunk.org/en/latest/tutorials/SlideAndPinJoint.html
 - http://pyratesarecool.appspot.com/Integrating_Pyglet_and_Pymunk
 
