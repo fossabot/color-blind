@@ -5,25 +5,26 @@ import pymunk
 
 window = pyglet.window.Window(width=1280, height=720)
 fps = 60.0
-clock = pyglet.clock.Clock(fps_limit=fps)
 space = pymunk.Space()
 space.gravity = (0.0, -100.0)
 
 ball = None
+
+
+def update(dt):
+  global space
+  space.step(dt)
 
 @window.event
 def on_draw():
   global ball
   glClear(GL_COLOR_BUFFER_BIT)
   glColor3f(1, 1, 1)
-
   window.clear()
-  space.step(clock.tick())
-
   if ball is None:
     ball = add_ball(space)
+    add_floor(space)
   draw_ball(ball)
-    
 
 
 def add_ball(space):
@@ -35,6 +36,14 @@ def add_ball(space):
   shape = pymunk.Circle(body, radius)
   space.add(body, shape)
   return shape
+
+
+def add_floor(space):
+    body = pymunk.Body()
+    body.position = window.width // 2, 0
+    shape = pymunk.Segment(body, (-500, 0), (500, 0), 15)
+    shape.elasticity = 0.5
+    space.add(shape)
 
 
 def draw_ball(ball):
@@ -56,4 +65,5 @@ def draw_circle(x, y, radius):
 
 
 if __name__ == '__main__':
+  pyglet.clock.schedule_interval(update, 1 / fps)
   pyglet.app.run()
