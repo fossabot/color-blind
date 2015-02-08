@@ -1,6 +1,6 @@
 window:
-  width: 1280
-  height: 720
+  width: &window_width 1280
+  height: &window_height 720
 fps: 60.0
 gravity:
   x: 0.0
@@ -12,10 +12,24 @@ player:
   elasticity: 0.5
   radius: 0.0
 shapes:
-  - position: [640, 0]
-    mass: 1.0
+  # Floor.
+  - position: [0, 0]
     friction: 0.5
     elasticity: 0.5
-    radius: 0.0
-    vertices: [[1, 10], [1280, 10], [1280, 1], [1, 1]]
+    vertices: [[1, 10], [*window_width, 10], [*window_width, 1], [1, 1]]
+  # Left wall.
+  - position: [1, *window_height]
+    friction: 0.5
+    elasticity: 0.5
+    vertices: [[1, 710], [10, 710], [10, 10], [1, 10]]
+  # Ceiling.
+  - position: [1, 710]
+    friction: 0.5
+    elasticity: 0.5
+    vertices: [[1, 710], [1, *window_height], [*window_width, *window_height], [*window_width, 710]]
+  # Right wall.
+  - position: [1270, 11]
+    friction: 0.5
+    elasticity: 0.5
+    vertices: [[1270, 10], [1270, 710], [1280, 710], [1280, 10]]
   
