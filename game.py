@@ -43,7 +43,7 @@ def create_shape(mass, moment, position, vertices, elasticity, friction):
     global space
     body = pymunk.Body(mass, moment)
     body.position = position
-    shape = pymunk.Poly(body, vertices)
+    shape = pymunk.Poly(body, vertices, radius=1)
     shape.elasticity = elasticity
     shape.friction = friction
     if mass is None:
@@ -53,18 +53,18 @@ def create_shape(mass, moment, position, vertices, elasticity, friction):
     return shape
 
 
-def draw_rectangle(vertices):
+def draw_rectangle(vertices, position, angle=0):
+  glPushMatrix()
+  glMatrixMode(GL_MODELVIEW)
+  glLoadIdentity()
+  glTranslatef(position[0], position[1], 0)
+  glRotatef(angle, 0, 0, 1)
+  if angle != 0: print(angle)
   glBegin(GL_LINE_LOOP)
   for vertex in vertices:
       glVertex2f(vertex[0], vertex[1])
   glEnd()
-
-
-@window.event
-def on_key_press(symbol, modifiers):
-  global objects
-  if symbol == key.LEFT:
-    ball.body.apply_impulse((-50, 0))
+  glPopMatrix()
 
 
 @window.event
@@ -74,11 +74,14 @@ def on_draw():
   glColor3f(0.9, 0.9, 0.9)
   window.clear()
   for shape in shapes:
-      draw_rectangle(map(lambda vs: add_tuple(shape.body.position, vs), shape.verts))
+      draw_rectangle(shape.verts, shape.body.position, shape.body.angle)
 
 
-def add_tuple(xs, ys):
-    return map(sum, zip(xs, ys))
+@window.event
+def on_key_press(symbol, modifiers):
+  global objects
+  if symbol == key.LEFT:
+    ball.body.apply_impulse((-50, 0))
 
 
 if __name__ == '__main__':

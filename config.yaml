@@ -1,21 +1,27 @@
 window:
   width: &window_width 1280
   height: &window_height 720
-fps: 60.0
+fps: 120.0
 gravity:
   x: 0.0
-  y: -200.0
+  y: -250.0
 shapes:
   # Box.
-  - mass: 1
+  - mass: 2
     position: [640, 460]
     friction: 0.5
     elasticity: 0.5
     vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
+  # Box 2.
+  - mass: null
+    position: [625, 300]
+    friction: 0.5
+    elasticity: 1
+    vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
   # Floor.
   - mass: null
     position: [1, 1]
-    friction: 0.5
+    friction: 1
     elasticity: 0.5
     vertices: [[0, 9], [1279, 9], [1279, 0], [0, 0]]
   # Left wall.
