@@ -22,8 +22,14 @@ def setup():
   global config
   global shapes
   for shape in config['shapes']:
-      shapes.append(create_shape(tuple(shape['position']),
-                                 map(tuple, shape['vertices']), 
+      moment = None 
+      vertices = map(tuple, shape['vertices'])
+      if shape['mass'] is not None:
+          moment = pymunk.moment_for_poly(shape['mass'], vertices)
+      shapes.append(create_shape(shape['mass'],
+                                 moment,
+                                 tuple(shape['position']),
+                                 vertices,
                                  shape['elasticity'],
                                  shape['friction']))
 
@@ -33,14 +39,17 @@ def update(dt):
   space.step(dt)
 
 
-def create_shape(position, vertices, elasticity, friction):
+def create_shape(mass, moment, position, vertices, elasticity, friction):
     global space
-    body = pymunk.Body()
+    body = pymunk.Body(mass, moment)
     body.position = position
     shape = pymunk.Poly(body, vertices)
     shape.elasticity = elasticity
     shape.friction = friction
-    space.add(shape)
+    if mass is None:
+        space.add(shape)
+    else:
+        space.add(body, shape)
     return shape
 
 
@@ -65,7 +74,11 @@ def on_draw():
   glColor3f(0.9, 0.9, 0.9)
   window.clear()
   for shape in shapes:
-    draw_rectangle(shape.verts)
+      draw_rectangle(map(lambda vs: add_tuple(shape.body.position, vs), shape.verts))
+
+
+def add_tuple(xs, ys):
+    return map(sum, zip(xs, ys))
 
 
 if __name__ == '__main__':

@@ -5,31 +5,35 @@ fps: 60.0
 gravity:
   x: 0.0
   y: -200.0
-player:
-  position: [640, 460]
-  mass: 1.0
-  friction: 0.5
-  elasticity: 0.5
-  radius: 0.0
 shapes:
+  # Box.
+  - mass: 1
+    position: [640, 460]
+    friction: 0.5
+    elasticity: 0.5
+    vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
   # Floor.
-  - position: [0, 0]
+  - mass: null
+    position: [1, 1]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[1, 10], [*window_width, 10], [*window_width, 1], [1, 1]]
+    vertices: [[0, 9], [1279, 9], [1279, 0], [0, 0]]
   # Left wall.
-  - position: [1, *window_height]
+  - mass: null
+    position: [1, 10]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[1, 710], [10, 710], [10, 10], [1, 10]]
+    vertices: [[0, 0], [0, 700], [9, 700], [9, 0]]
   # Ceiling.
-  - position: [1, 710]
+  - mass: null
+    position: [1, 711]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[1, 710], [1, *window_height], [*window_width, *window_height], [*window_width, 710]]
+    vertices: [[0, 9], [1279, 9], [1279, 0], [0, 0]]
   # Right wall.
-  - position: [1270, 11]
+  - mass: null
+    position: [1270, 10]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[1270, 10], [1270, 710], [1280, 710], [1280, 10]]
+    vertices: [[0, 0], [0, 700], [9, 700], [9, 0]]
   
