@@ -1,6 +1,9 @@
 window:
-  width: &window_width 1280
-  height: &window_height 720
+  width: 1280
+  height: 720
+opengl:
+  sample_buffers: 1
+  samples: 4
 fps: 120.0
 gravity:
   x: 0.0
@@ -13,33 +16,33 @@ shapes:
     elasticity: 0.5
     vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
   # Box 2.
-  - mass: null
+  - mass: 1
     position: [625, 300]
     friction: 0.5
     elasticity: 1
     vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
   # Floor.
   - mass: null
-    position: [1, 1]
+    position: [0, 0]
     friction: 1
     elasticity: 0.5
-    vertices: [[0, 9], [1279, 9], [1279, 0], [0, 0]]
+    vertices: [[0, 5], [1280, 5], [1280, 0], [0, 0]]
   # Left wall.
   - mass: null
-    position: [1, 10]
+    position: [0, 5]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[0, 0], [0, 700], [9, 700], [9, 0]]
+    vertices: [[0, 0], [0, 710], [8, 710], [8, 0]]
   # Ceiling.
   - mass: null
-    position: [1, 711]
+    position: [0, 715]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[0, 9], [1279, 9], [1279, 0], [0, 0]]
+    vertices: [[0, 5], [1280, 5], [1280, 0], [0, 0]]
   # Right wall.
   - mass: null
-    position: [1270, 10]
+    position: [1272, 5]
     friction: 0.5
     elasticity: 0.5
-    vertices: [[0, 0], [0, 700], [9, 700], [9, 0]]
+    vertices: [[0, 0], [0, 710], [8, 710], [8, 0]]
   

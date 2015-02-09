@@ -4,24 +4,30 @@ import pyglet
 import pymunk
 import yaml
 
-config = yaml.load(file('config.yaml', 'r'))
-window = pyglet.window.Window(width=config['window']['width'],
-                              height=config['window']['height'])
+setting = yaml.load(file('settings.yaml', 'r'))
+config = pyglet.gl.Config(sample_buffers=setting['opengl']['sample_buffers'],
+                          samples=setting['opengl']['samples'])
+window = pyglet.window.Window(width=setting['window']['width'],
+                              height=setting['window']['height'],
+                              config=config)
+fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
-space.gravity = (config['gravity']['x'], config['gravity']['y'])
+space.gravity = (setting['gravity']['x'], setting['gravity']['y'])
 shapes = []
 
 
 def main():
   setup()
-  pyglet.clock.schedule_interval(update, 1 / config['fps'])
+  pyglet.clock.schedule_interval(update, 1 / setting['fps'])
+  pyglet.clock.set_fps_limit(setting['fps'])
   pyglet.app.run()
 
 
 def setup():
-  global config
+  global setting
   global shapes
-  for shape in config['shapes']:
+  glClearColor(0.1, 0.1, 0.1, 0.1)
+  for shape in setting['shapes']:
       moment = None 
       vertices = map(tuple, shape['vertices'])
       if shape['mass'] is not None:
@@ -43,7 +49,7 @@ def create_shape(mass, moment, position, vertices, elasticity, friction):
     global space
     body = pymunk.Body(mass, moment)
     body.position = position
-    shape = pymunk.Poly(body, vertices, radius=1)
+    shape = pymunk.Poly(body, vertices)
     shape.elasticity = elasticity
     shape.friction = friction
     if mass is None:
@@ -55,13 +61,10 @@ def create_shape(mass, moment, position, vertices, elasticity, friction):
 
 def draw_rectangle(vertices, position, angle=0):
   glPushMatrix()
-  glMatrixMode(GL_MODELVIEW)
-  glLoadIdentity()
   glTranslatef(position[0], position[1], 0)
   glRotatef(angle, 0, 0, 1)
-  if angle != 0: print(angle)
-  glBegin(GL_LINE_LOOP)
-  for vertex in vertices:
+  glBegin(GL_TRIANGLE_STRIP)
+  for vertex in vertices[:2] + vertices[:1:-1]:
       glVertex2f(vertex[0], vertex[1])
   glEnd()
   glPopMatrix()
@@ -73,6 +76,7 @@ def on_draw():
   glClear(GL_COLOR_BUFFER_BIT)
   glColor3f(0.9, 0.9, 0.9)
   window.clear()
+  fps.draw()
   for shape in shapes:
       draw_rectangle(shape.verts, shape.body.position, shape.body.angle)
 
