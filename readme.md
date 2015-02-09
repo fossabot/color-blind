@@ -4,12 +4,11 @@ _Attempting video game development._
 
 Resources
 ---------
-- https://code.google.com/p/py-lepton/
-- http://codeschool.org/game-programming/
-- http://pyratesarecool.appspot.com/Integrating_Pyglet_and_Pymunk
-- http://www.pyglet.org/
-- http://www.pymunk.org/en/latest/index.html
-- http://www.pymunk.org/en/latest/tutorials/SlideAndPinJoint.html
+- [Lighting and feel](https://github.com/jacobbrunson/BasicLighting)
+- [py-lepton particle engine](https://code.google.com/p/py-lepton/)
+- [pyglet programmer`s guide](http://www.pyglet.org/doc/programming_guide/index.html)
+- [pymunk API](http://pymunk.readthedocs.org/en/latest/pymunk.html)
+- [pybox2d manual](https://code.google.com/p/pybox2d/wiki/GettingStartedManual)
 
 License
 -------
