@@ -27,17 +27,8 @@ def setup():
   global setting
   global shapes
   glClearColor(0.1, 0.1, 0.1, 0.1)
-  for shape in setting['shapes']:
-      moment = None 
-      vertices = map(tuple, shape['vertices'])
-      if shape['mass'] is not None:
-          moment = pymunk.moment_for_poly(shape['mass'], vertices)
-      shapes.append(create_shape(shape['mass'],
-                                 moment,
-                                 tuple(shape['position']),
-                                 vertices,
-                                 shape['elasticity'],
-                                 shape['friction']))
+  for properties in setting['shapes']:
+      shapes.append(create_shape(properties))
 
 
 def update(dt):
@@ -45,23 +36,56 @@ def update(dt):
   space.step(dt)
 
 
-def create_shape(mass, moment, position, vertices, elasticity, friction):
+def create_shape(properties):
+    return {
+        'poly': lambda: create_poly(properties),
+        'segment': lambda: create_segment(properties)
+    }[properties['type']]()
+
+
+def create_segment(properties):
     global space
-    body = pymunk.Body(mass, moment)
-    body.position = position
-    shape = pymunk.Poly(body, vertices)
-    shape.elasticity = elasticity
-    shape.friction = friction
-    if mass is None:
+    moment = None 
+    vertices = map(tuple, properties['vertices'])
+    if properties['mass'] is not None:
+        moment = pymunk.moment_for_segment(properties['mass'], 
+                                           vertices[0],
+                                           vertices[1])
+    body = pymunk.Body(properties['mass'], moment)
+    body.position = tuple(properties['position'])
+    print(vertices[0])
+    shape = pymunk.Segment(body, vertices[0], vertices[1], float(properties['radius']))
+    shape.elasticity = properties['elasticity']
+    shape.friction = properties['friction']
+    if properties['mass'] is None:
         space.add(shape)
     else:
         space.add(body, shape)
-    return shape
+    return properties['type'], shape
+
+
+def create_poly(properties):
+    global space
+    moment = None 
+    vertices = map(tuple, properties['vertices'])
+    if properties['mass'] is not None:
+        moment = pymunk.moment_for_poly(properties['mass'], vertices)
+    body = pymunk.Body(properties['mass'], moment)
+    body.position = tuple(properties['position'])
+    shape = pymunk.Poly(body, vertices)
+    shape.elasticity = properties['elasticity']
+    shape.friction = properties['friction']
+    if properties['mass'] is None:
+        space.add(shape)
+    else:
+        space.add(body, shape)
+    return properties['type'], shape
 
 
 def draw_rectangle(vertices, position, angle=0):
   glPushMatrix()
   glTranslatef(position[0], position[1], 0)
+  if angle > 0: print(angle)
   glRotatef(angle, 0, 0, 1)
   glBegin(GL_TRIANGLE_STRIP)
   for vertex in vertices[:2] + vertices[:1:-1]:
@@ -78,7 +102,10 @@ def on_draw():
   window.clear()
   fps.draw()
   for shape in shapes:
-      draw_rectangle(shape.verts, shape.body.position, shape.body.angle)
+      if shape[0] == 'poly':
+          draw_rectangle(shape[1].verts,
+                         shape[1].body.position, 
+                         shape[1].body.angle)
 
 
 @window.event
