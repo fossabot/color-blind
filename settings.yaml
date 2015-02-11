@@ -4,33 +4,39 @@ window:
 opengl:
   sample_buffers: 1
   samples: 4
-fps: 120.0
+fps: 60.0
 gravity:
   x: 0.0
-  y: -250.0
+  y: -500.0
 shapes:
-  # Box.
-  - mass: 2
+  # Player.
+  - mass: 1
+    type: player
+    position: [645, 500]
+    friction: 1
+    elasticity: 0.5
+    vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
+  # Box 1.
+  - mass: 0.1
     type: poly
     position: [640, 460]
     friction: 0.5
     elasticity: 0.5
     vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
   # Box 2.
-  - mass: 2
+  - mass: 0.05
     type: poly
     position: [630, 400]
     friction: 0.5
     elasticity: 0.9
-    vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
-  # Floor buffer.
-  - mass: null
-    type: segment
-    radius: 2
-    position: [640, 6]
-    friction: 0.5
-    elasticity: 0.5
-    vertices: [[-635, 0], [635, 0]]
+    vertices: [[-20, -20], [-20, 20], [20, 20], [20, -20]]
+  # Box 3.
+  - mass: 0.05
+    type: poly
+    position: [630, 50]
+    friction: 0.2
+    elasticity: 0.9
+    vertices: [[-30, -30], [-30, 30], [30, 30], [30, -30]]
   # Floor.
   - mass: null
     type: poly

@@ -13,6 +13,7 @@ window = pyglet.window.Window(width=setting['window']['width'],
 fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
 space.gravity = (setting['gravity']['x'], setting['gravity']['y'])
+player = {'movement': None}
 shapes = []
 
 
@@ -24,20 +25,30 @@ def main():
 
 
 def setup():
+  global player
   global setting
   global shapes
   glClearColor(0.1, 0.1, 0.1, 0.1)
   for properties in setting['shapes']:
-      shapes.append(create_shape(properties))
+      if properties['type'] == 'player':
+          player['shape'] = create_shape(properties)
+      else:
+          shapes.append(create_shape(properties))
+  player['shape'][1].body.velocity_limit = 300
 
 
 def update(dt):
   global space
+  if player['movement'] == 'left':
+      player['shape'][1].body.apply_impulse((-10, 0))
+  if player['movement'] == 'right':
+      player['shape'][1].body.apply_impulse((10, 0))
   space.step(dt)
 
 
 def create_shape(properties):
     return {
+        'player': lambda: create_poly(properties),
         'poly': lambda: create_poly(properties),
         'segment': lambda: create_segment(properties)
     }[properties['type']]()
@@ -53,7 +64,6 @@ def create_segment(properties):
                                            vertices[1])
     body = pymunk.Body(properties['mass'], moment)
     body.position = tuple(properties['position'])
-    print(vertices[0])
     shape = pymunk.Segment(body, vertices[0], vertices[1], float(properties['radius']))
     shape.elasticity = properties['elasticity']
     shape.friction = properties['friction']
@@ -85,8 +95,7 @@ def create_poly(properties):
 def draw_rectangle(vertices, position, angle=0):
   glPushMatrix()
   glTranslatef(position[0], position[1], 0)
-  if angle > 0: print(angle)
-  glRotatef(angle, 0, 0, 1)
+  glRotatef(angle * 57.3, 0, 0, 1)
   glBegin(GL_TRIANGLE_STRIP)
   for vertex in vertices[:2] + vertices[:1:-1]:
       glVertex2f(vertex[0], vertex[1])
@@ -96,11 +105,15 @@ def draw_rectangle(vertices, position, angle=0):
 
 @window.event
 def on_draw():
+  global player
   global shapes
   glClear(GL_COLOR_BUFFER_BIT)
   glColor3f(0.9, 0.9, 0.9)
   window.clear()
   fps.draw()
+  draw_rectangle(player['shape'][1].verts,
+                 player['shape'][1].body.position, 
+                 player['shape'][1].body.angle)
   for shape in shapes:
       if shape[0] == 'poly':
           draw_rectangle(shape[1].verts,
@@ -112,8 +125,18 @@ def on_draw():
 def on_key_press(symbol, modifiers):
   global objects
   if symbol == key.LEFT:
-    ball.body.apply_impulse((-50, 0))
+    player['movement'] = 'left'
+  if symbol == key.RIGHT:
+    player['movement'] = 'right'
+  if symbol == key.UP:
+    player['shape'][1].body.apply_impulse((0, 300))
 
+@window.event
+def on_key_release(symbol, modifiers):
+  if symbol == key.LEFT:
+    player['movement'] = None
+  if symbol == key.RIGHT:
+    player['movement'] = None
 
 if __name__ == '__main__':
   main()
