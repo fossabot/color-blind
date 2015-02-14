@@ -25,6 +25,7 @@ fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
 player = rebunch({'movement': None})
 shapes = []
+keys_pressed = []
 
 
 def main():
@@ -52,10 +53,12 @@ def setup_physics():
 
 
 def update(dt):
-  if player.movement == 'left':
-      player.shape.body.apply_impulse((-10, 0))
-  if player.movement == 'right':
-      player.shape.body.apply_impulse((10, 0))
+  if key.LEFT in keys_pressed:
+    player.shape.body.apply_impulse((-10, 0))
+  if key.RIGHT in keys_pressed:
+    player.shape.body.apply_impulse((10, 0))
+  if key.UP in keys_pressed:
+    player.shape.body.apply_impulse((0, 300))
   space.step(dt)
 
 
@@ -136,20 +139,15 @@ def on_draw():
 
 @window.event
 def on_key_press(symbol, modifiers):
-  global objects
-  if symbol == key.LEFT:
-    player.movement = 'left'
-  if symbol == key.RIGHT:
-    player.movement = 'right'
-  if symbol == key.UP:
-    player.shape.body.apply_impulse((0, 300))
+  if symbol not in keys_pressed:
+    keys_pressed.append(symbol)
+      
 
 @window.event
 def on_key_release(symbol, modifiers):
-  if symbol == key.LEFT:
-    player.movement = None
-  if symbol == key.RIGHT:
-    player.movement = None
+  if symbol in keys_pressed:
+      keys_pressed.remove(symbol)
+
 
 if __name__ == '__main__':
   main()
