@@ -45,17 +45,17 @@ def setup_physics():
       objects.append(rebunch(properties['object']))
   for properties in objects:
     if properties.type == 'player':
-      player['shape'] = create_shape(properties)[1]
-      player['shape'].body.velocity_limit = properties['velocity_limit']
+      player.shape = create_shape(properties)[1]
+      player.shape.body.velocity_limit = properties['velocity_limit']
     else:
       shapes.append(create_shape(properties))
 
 
 def update(dt):
-  if player['movement'] == 'left':
-      player['shape'].body.apply_impulse((-10, 0))
-  if player['movement'] == 'right':
-      player['shape'].body.apply_impulse((10, 0))
+  if player.movement == 'left':
+      player.shape.body.apply_impulse((-10, 0))
+  if player.movement == 'right':
+      player.shape.body.apply_impulse((10, 0))
   space.step(dt)
 
 
@@ -124,9 +124,9 @@ def on_draw():
   glColor3f(0.9, 0.9, 0.9)
   window.clear()
   fps.draw()
-  draw_rectangle(player['shape'].verts,
-                 player['shape'].body.position,
-                 player['shape'].body.angle)
+  draw_rectangle(player.shape.verts,
+                 player.shape.body.position,
+                 player.shape.body.angle)
   for shape in shapes:
       if shape[0] == 'poly':
           draw_rectangle(shape[1].verts,
@@ -138,18 +138,18 @@ def on_draw():
 def on_key_press(symbol, modifiers):
   global objects
   if symbol == key.LEFT:
-    player['movement'] = 'left'
+    player.movement = 'left'
   if symbol == key.RIGHT:
-    player['movement'] = 'right'
+    player.movement = 'right'
   if symbol == key.UP:
-    player['shape'].body.apply_impulse((0, 300))
+    player.shape.body.apply_impulse((0, 300))
 
 @window.event
 def on_key_release(symbol, modifiers):
   if symbol == key.LEFT:
-    player['movement'] = None
+    player.movement = None
   if symbol == key.RIGHT:
-    player['movement'] = None
+    player.movement = None
 
 if __name__ == '__main__':
   main()
