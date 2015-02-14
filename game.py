@@ -5,11 +5,21 @@ import pyglet
 import pymunk
 import yaml
 
-settings = yaml.load(file('settings.yaml', 'r'))
-config = pyglet.gl.Config(sample_buffers=settings['opengl']['sample_buffers'], 
-                          samples=settings['opengl']['samples'])
-window = pyglet.window.Window(width=settings['window']['width'],
-                              height=settings['window']['height'],
+def rebunch(d):
+  if isinstance(d, dict):
+    d = bunch.Bunch(d)
+    for k, v in d.items():
+      if isinstance(v, dict):
+        v = rebunch(v)
+      d[k] = v
+  return d
+      
+
+settings = rebunch(yaml.load(file('settings.yaml', 'r')))
+config = pyglet.gl.Config(sample_buffers=settings.opengl.sample_buffers, 
+                          samples=settings.opengl.samples)
+window = pyglet.window.Window(width=settings.window.width,
+                              height=settings.window.height,
                               config=config)
 fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
@@ -20,7 +30,7 @@ shapes = []
 def main():
   setup_graphics()
   setup_physics()
-  pyglet.clock.schedule_interval(update, 1/settings['fps'])
+  pyglet.clock.schedule_interval(update, 1/settings.fps)
   pyglet.app.run()
 
 
@@ -29,10 +39,9 @@ def setup_graphics():
 
 
 def setup_physics():
-  space.gravity = (settings['gravity']['x'], settings['gravity']['y'])
-  objects = yaml.load(file(settings['paths']['objects'], 'r'))['objects']
+  space.gravity = (settings.gravity.x, settings.gravity.y)
+  objects = rebunch(yaml.load(file(settings.paths.objects, 'r')))['objects']
   for properties in (o['object'] for o in objects):
-    print(properties)
     if properties['type'] == 'player':
       player['shape'] = create_shape(properties)
       player['shape'][1].body.velocity_limit = properties['velocity_limit']
