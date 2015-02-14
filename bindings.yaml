@@ -1,0 +1,7 @@
+states:
+  - name: 'running'
+    movement:
+      left: left
+      right: right
+      jump: up
+
