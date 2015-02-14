@@ -23,7 +23,7 @@ window = pyglet.window.Window(width=settings.window.width,
                               config=config)
 fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
-player = {'movement': None}
+player = rebunch({'movement': None})
 shapes = []
 
 
