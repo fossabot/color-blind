@@ -40,8 +40,10 @@ def setup_graphics():
 
 def setup_physics():
   space.gravity = (settings.gravity.x, settings.gravity.y)
-  objects = rebunch(yaml.load(file(settings.paths.objects, 'r')))['objects']
-  for properties in (o['object'] for o in objects):
+  objects = []
+  for properties in yaml.load(file(settings.paths.objects, 'r'))['objects']:
+      objects.append(rebunch(properties['object']))
+  for properties in objects:
     if properties['type'] == 'player':
       player['shape'] = create_shape(properties)
       player['shape'][1].body.velocity_limit = properties['velocity_limit']
