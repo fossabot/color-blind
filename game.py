@@ -44,18 +44,18 @@ def setup_physics():
   for properties in yaml.load(file(settings.paths.objects, 'r'))['objects']:
       objects.append(rebunch(properties['object']))
   for properties in objects:
-    if properties['type'] == 'player':
-      player['shape'] = create_shape(properties)
-      player['shape'][1].body.velocity_limit = properties['velocity_limit']
+    if properties.type == 'player':
+      player['shape'] = create_shape(properties)[1]
+      player['shape'].body.velocity_limit = properties['velocity_limit']
     else:
       shapes.append(create_shape(properties))
 
 
 def update(dt):
   if player['movement'] == 'left':
-      player['shape'][1].body.apply_impulse((-10, 0))
+      player['shape'].body.apply_impulse((-10, 0))
   if player['movement'] == 'right':
-      player['shape'][1].body.apply_impulse((10, 0))
+      player['shape'].body.apply_impulse((10, 0))
   space.step(dt)
 
 
@@ -124,13 +124,13 @@ def on_draw():
   glColor3f(0.9, 0.9, 0.9)
   window.clear()
   fps.draw()
-  draw_rectangle(player['shape'][1].verts,
-                 player['shape'][1].body.position, 
-                 player['shape'][1].body.angle)
+  draw_rectangle(player['shape'].verts,
+                 player['shape'].body.position,
+                 player['shape'].body.angle)
   for shape in shapes:
       if shape[0] == 'poly':
           draw_rectangle(shape[1].verts,
-                         shape[1].body.position, 
+                         shape[1].body.position,
                          shape[1].body.angle)
 
 
@@ -142,7 +142,7 @@ def on_key_press(symbol, modifiers):
   if symbol == key.RIGHT:
     player['movement'] = 'right'
   if symbol == key.UP:
-    player['shape'][1].body.apply_impulse((0, 300))
+    player['shape'].body.apply_impulse((0, 300))
 
 @window.event
 def on_key_release(symbol, modifiers):
