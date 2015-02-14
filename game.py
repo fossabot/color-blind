@@ -1,44 +1,46 @@
 from pyglet.gl import *
 from pyglet.window import key
+import bunch
 import pyglet 
 import pymunk
 import yaml
 
-setting = yaml.load(file('settings.yaml', 'r'))
-config = pyglet.gl.Config(sample_buffers=setting['opengl']['sample_buffers'],
-                          samples=setting['opengl']['samples'])
-window = pyglet.window.Window(width=setting['window']['width'],
-                              height=setting['window']['height'],
+settings = yaml.load(file('settings.yaml', 'r'))
+config = pyglet.gl.Config(sample_buffers=settings['opengl']['sample_buffers'], 
+                          samples=settings['opengl']['samples'])
+window = pyglet.window.Window(width=settings['window']['width'],
+                              height=settings['window']['height'],
                               config=config)
 fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
-space.gravity = (setting['gravity']['x'], setting['gravity']['y'])
 player = {'movement': None}
 shapes = []
 
 
 def main():
-  setup()
-  pyglet.clock.schedule_interval(update, 1 / setting['fps'])
-  pyglet.clock.set_fps_limit(setting['fps'])
+  setup_graphics()
+  setup_physics()
+  pyglet.clock.schedule_interval(update, 1/settings['fps'])
   pyglet.app.run()
 
 
-def setup():
-  global player
-  global setting
-  global shapes
+def setup_graphics():
   glClearColor(0.1, 0.1, 0.1, 0.1)
-  for properties in setting['shapes']:
-      if properties['type'] == 'player':
-          player['shape'] = create_shape(properties)
-      else:
-          shapes.append(create_shape(properties))
-  player['shape'][1].body.velocity_limit = 300
+
+
+def setup_physics():
+  space.gravity = (settings['gravity']['x'], settings['gravity']['y'])
+  objects = yaml.load(file(settings['paths']['objects'], 'r'))['objects']
+  for properties in (o['object'] for o in objects):
+    print(properties)
+    if properties['type'] == 'player':
+      player['shape'] = create_shape(properties)
+      player['shape'][1].body.velocity_limit = properties['velocity_limit']
+    else:
+      shapes.append(create_shape(properties))
 
 
 def update(dt):
-  global space
   if player['movement'] == 'left':
       player['shape'][1].body.apply_impulse((-10, 0))
   if player['movement'] == 'right':

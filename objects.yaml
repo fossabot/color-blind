@@ -1,0 +1,64 @@
+templates:
+  - template: &dynamic
+      elasticity: 0.5
+      friction: 0.5
+      mass: 1
+      position: [0, 0]
+      type: poly
+      vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
+  - template: &static
+      elasticity: 0.5
+      friction: 0.5
+      mass: null
+      position: [0, 0]
+      type: poly
+      vertices: [[-100, -10], [-100, 10], [100, 10], [100, -10]]
+objects:
+  # Player.
+  - object:
+      <<: *dynamic
+      friction: 1
+      position: [645, 500]
+      type: player
+      velocity_limit: 300
+  # Box 1.
+  - object:
+      <<: *dynamic
+      mass: 0.1
+      position: [640, 460]
+  # Box 2.
+  - object:
+      <<: *dynamic
+      mass: 0.05
+      position: [630, 400]
+      elasticity: 0.9
+      vertices: [[-20, -20], [-20, 20], [20, 20], [20, -20]]
+  # Box 3.
+  - object:
+      <<: *dynamic
+      mass: 0.05
+      position: [630, 50]
+      friction: 0.2
+      elasticity: 0.9
+      vertices: [[-30, -30], [-30, 30], [30, 30], [30, -30]]
+  # Floor.
+  - object:
+      <<: *static
+      friction: 1
+      vertices: [[0, 5], [1280, 5], [1280, 0], [0, 0]]
+  # Left wall.
+  - object:
+      <<: *static
+      position: [0, 5]
+      vertices: [[0, 0], [0, 710], [8, 710], [8, 0]]
+  # Ceiling.
+  - object:
+      <<: *static
+      position: [0, 715]
+      vertices: [[0, 5], [1280, 5], [1280, 0], [0, 0]]
+  # Right wall.
+  - object:
+      <<: *static
+      position: [1272, 5]
+      vertices: [[0, 0], [0, 710], [8, 710], [8, 0]]
+
