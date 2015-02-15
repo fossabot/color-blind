@@ -21,6 +21,9 @@ objects:
       position: [645, 500]
       type: player
       velocity_limit: 300
+      impulse_left: -10
+      impulse_right: 10
+      impulse_up: 300
   # Box 1.
   - object:
       <<: *dynamic

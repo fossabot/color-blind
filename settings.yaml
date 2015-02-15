@@ -10,3 +10,4 @@ gravity:
   y: -500.0
 paths:
   objects: objects.yaml
+  bindings: bindings.yaml

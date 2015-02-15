@@ -1,5 +1,4 @@
 from pyglet.gl import *
-from pyglet.window import key
 import bunch
 import pyglet 
 import pymunk
@@ -23,16 +22,23 @@ window = pyglet.window.Window(width=settings.window.width,
                               config=config)
 fps = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
-player = rebunch({'movement': None})
+bindings = rebunch({})
+player = rebunch({})
 shapes = []
 keys_pressed = []
 
 
 def main():
+  setup_bindings()
   setup_graphics()
   setup_physics()
   pyglet.clock.schedule_interval(update, 1/settings.fps)
   pyglet.app.run()
+
+def setup_bindings():
+  for state in yaml.load(file(settings.paths.bindings, 'r'))['states']:
+      state = rebunch(state['state'])
+      bindings[state.name] = state
 
 
 def setup_graphics():
@@ -48,17 +54,18 @@ def setup_physics():
     if properties.type == 'player':
       player.shape = create_shape(properties)[1]
       player.shape.body.velocity_limit = properties['velocity_limit']
+      player.properties = properties
     else:
       shapes.append(create_shape(properties))
 
 
 def update(dt):
-  if key.LEFT in keys_pressed:
-    player.shape.body.apply_impulse((-10, 0))
-  if key.RIGHT in keys_pressed:
-    player.shape.body.apply_impulse((10, 0))
-  if key.UP in keys_pressed:
-    player.shape.body.apply_impulse((0, 300))
+  if any(k in keys_pressed for k in bindings.running.movement.left):
+    player.shape.body.apply_impulse((player.properties.impulse_left, 0))
+  if any(k in keys_pressed for k in bindings.running.movement.right):
+    player.shape.body.apply_impulse((player.properties.impulse_right, 0))
+  if any(k in keys_pressed for k in bindings.running.movement.jump):
+    player.shape.body.apply_impulse((0, player.properties.impulse_up))
   space.step(dt)
 
 
