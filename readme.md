@@ -5,6 +5,9 @@ _Attempting video game development._
 Resources
 ---------
 - [Lighting and feel](https://github.com/jacobbrunson/BasicLighting)
+- [OpenGL documentation](http://docs.gl/)
+- [OpenGL Python tutorial](http://www.labri.fr/perso/nrougier/teaching/opengl/#introduction)
+- [OpenGL tutorial](https://open.gl/drawing)
 - [py-lepton particle engine](https://code.google.com/p/py-lepton/)
 - [pyglet programmer`s guide](http://www.pyglet.org/doc/programming_guide/index.html)
 - [pymunk API](http://pymunk.readthedocs.org/en/latest/pymunk.html)
