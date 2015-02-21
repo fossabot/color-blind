@@ -1,75 +1,96 @@
-from pyglet.gl import *
 import bunch
-import pyglet 
+import pyglet
+import pyglet.gl as gl
 import pymunk
 import yaml
 
-def rebunch(d):
-  if isinstance(d, dict):
-    d = bunch.Bunch(d)
-    for k, v in d.items():
-      if isinstance(v, dict):
-        v = rebunch(v)
-      d[k] = v
-  return d
-      
 
-settings = rebunch(yaml.load(file('settings.yaml', 'r')))
-config = pyglet.gl.Config(sample_buffers=settings.opengl.sample_buffers, 
-                          samples=settings.opengl.samples)
-window = pyglet.window.Window(width=settings.window.width,
-                              height=settings.window.height,
-                              config=config)
-fps = pyglet.clock.ClockDisplay()
-space = pymunk.Space()
-bindings = rebunch({})
-player = rebunch({})
-shapes = []
-keys_pressed = []
+def rebunch(dictionary):
+    """Recursively convert a dictionary to a bunch.
+
+    Keyword arguments:
+    dictionary -- the dictionary to covert into a bunch
+    """
+    if isinstance(dictionary, dict):
+        dictionary = bunch.Bunch(dictionary)
+        for key, value in dictionary.items():
+            if isinstance(value, dict):
+                value = rebunch(value)
+            dictionary[key] = value
+    return dictionary
+
+
+SETTINGS = rebunch(yaml.load(file('settings.yaml', 'r')))
+CONFIG = pyglet.gl.Config(sample_buffers=SETTINGS.opengl.sample_buffers,
+                          samples=SETTINGS.opengl.samples)
+WINDOW = pyglet.window.Window(width=SETTINGS.window.width,
+                              height=SETTINGS.window.height,
+                              config=CONFIG)
+FPS = pyglet.clock.ClockDisplay()
+SPACE = pymunk.Space()
+BINDINGS = rebunch({})
+PLAYER = rebunch({})
+SHAPES = []
+KEYS_PRESSED = []
 
 
 def main():
-  setup_bindings()
-  setup_graphics()
-  setup_physics()
-  pyglet.clock.schedule_interval(update, 1/settings.fps)
-  pyglet.app.run()
+    """Setup and initialise the application."""
+    setup_bindings()
+    setup_graphics()
+    setup_physics()
+    pyglet.clock.schedule_interval(update, 1 / SETTINGS.fps)
+    pyglet.app.run()
+
 
 def setup_bindings():
-  for state in yaml.load(file(settings.paths.bindings, 'r'))['states']:
-      state = rebunch(state['state'])
-      bindings[state.name] = state
+    """Load the key bindings from the configuration file."""
+    for state in yaml.load(file(SETTINGS.paths.bindings, 'r'))['states']:
+        state = rebunch(state['state'])
+        BINDINGS[state.name] = state
 
 
 def setup_graphics():
-  glClearColor(0.1, 0.1, 0.1, 0.1)
+    """Setup OpenGL and related graphical utilities."""
+    gl.glClearColor(0.1, 0.1, 0.1, 0.1)
 
 
 def setup_physics():
-  space.gravity = (settings.gravity.x, settings.gravity.y)
-  objects = []
-  for properties in yaml.load(file(settings.paths.objects, 'r'))['objects']:
-      objects.append(rebunch(properties['object']))
-  for properties in objects:
-    if properties.type == 'player':
-      player.shape = create_shape(properties)[1]
-      player.shape.body.velocity_limit = properties['velocity_limit']
-      player.properties = properties
-    else:
-      shapes.append(create_shape(properties))
+    """Setup physics engine and initialise the world space."""
+    SPACE.gravity = (SETTINGS.gravity.x, SETTINGS.gravity.y)
+    objects = []
+    for properties in yaml.load(file(SETTINGS.paths.objects, 'r'))['objects']:
+        objects.append(rebunch(properties['object']))
+    for properties in objects:
+        if properties.type == 'player':
+            PLAYER.shape = create_shape(properties)[1]
+            PLAYER.shape.body.velocity_limit = properties['velocity_limit']
+            PLAYER.properties = properties
+        else:
+            SHAPES.append(create_shape(properties))
 
 
 def update(dt):
-  if any(k in keys_pressed for k in bindings.running.movement.left):
-    player.shape.body.apply_impulse((player.properties.impulse_left, 0))
-  if any(k in keys_pressed for k in bindings.running.movement.right):
-    player.shape.body.apply_impulse((player.properties.impulse_right, 0))
-  if any(k in keys_pressed for k in bindings.running.movement.jump):
-    player.shape.body.apply_impulse((0, player.properties.impulse_up))
-  space.step(dt)
+    """Maintain the game state, inputs, and physical simulation.
+
+    Keyword arguments:
+    dt -- the change in time since the previously rendered frame
+    """
+    if any(k in KEYS_PRESSED for k in BINDINGS.running.movement.left):
+        PLAYER.shape.body.apply_impulse((PLAYER.properties.impulse_left, 0))
+    if any(k in KEYS_PRESSED for k in BINDINGS.running.movement.right):
+        PLAYER.shape.body.apply_impulse((PLAYER.properties.impulse_right, 0))
+    if any(k in KEYS_PRESSED for k in BINDINGS.running.movement.jump):
+        PLAYER.shape.body.apply_impulse((0, PLAYER.properties.impulse_up))
+    SPACE.step(dt)
 
 
 def create_shape(properties):
+    """Delegate the creation of a physical shape to the appropriate function.
+
+    Keyword arguments:
+    properties -- the physical informational traits of a shape
+    """
     return {
         'player': lambda: create_poly(properties),
         'poly': lambda: create_poly(properties),
@@ -78,28 +99,39 @@ def create_shape(properties):
 
 
 def create_segment(properties):
-    global space
-    moment = None 
+    """Create a physical segment based on configuration properties.
+
+    Keyword arguments:
+    properties -- the physical informational traits of a shape
+    """
+    moment = None
     vertices = map(tuple, properties['vertices'])
     if properties['mass'] is not None:
-        moment = pymunk.moment_for_segment(properties['mass'], 
+        moment = pymunk.moment_for_segment(properties['mass'],
                                            vertices[0],
                                            vertices[1])
     body = pymunk.Body(properties['mass'], moment)
     body.position = tuple(properties['position'])
-    shape = pymunk.Segment(body, vertices[0], vertices[1], float(properties['radius']))
+    shape = pymunk.Segment(body,
+                           vertices[0],
+                           vertices[1],
+                           float(properties['radius']))
     shape.elasticity = properties['elasticity']
     shape.friction = properties['friction']
     if properties['mass'] is None:
-        space.add(shape)
+        SPACE.add(shape)
     else:
-        space.add(body, shape)
+        SPACE.add(body, shape)
     return properties['type'], shape
 
 
 def create_poly(properties):
-    global space
-    moment = None 
+    """Create a physical polygon based on configuration properties.
+
+    Keyword arguments:
+    properties -- the physical informational traits of a shape
+    """
+    moment = None
     vertices = map(tuple, properties['vertices'])
     if properties['mass'] is not None:
         moment = pymunk.moment_for_poly(properties['mass'], vertices)
@@ -109,53 +141,60 @@ def create_poly(properties):
     shape.elasticity = properties['elasticity']
     shape.friction = properties['friction']
     if properties['mass'] is None:
-        space.add(shape)
+        SPACE.add(shape)
     else:
-        space.add(body, shape)
+        SPACE.add(body, shape)
     return properties['type'], shape
 
 
 def draw_rectangle(vertices, position, angle=0):
-  glPushMatrix()
-  glTranslatef(position[0], position[1], 0)
-  glRotatef(angle * 57.3, 0, 0, 1)
-  glBegin(GL_TRIANGLE_STRIP)
-  for vertex in vertices[:2] + vertices[:1:-1]:
-      glVertex2f(vertex[0], vertex[1])
-  glEnd()
-  glPopMatrix()
+    """Draw a rectangle using OpenGL based on the provided spacial information.
+
+    Keyword arguments:
+    vertices -- points on the rectangle presented in clockwise order
+    position -- x and y position to start the operation
+    angle -- draw angle in radians (default 0)
+    """
+    gl.glPushMatrix()
+    gl.glTranslatef(position[0], position[1], 0)
+    gl.glRotatef(angle * 57.3, 0, 0, 1)
+    gl.glBegin(gl.GL_TRIANGLE_STRIP)
+    for vertex in vertices[:2] + vertices[:1:-1]:
+        gl.glVertex2f(vertex[0], vertex[1])
+    gl.glEnd()
+    gl.glPopMatrix()
 
 
-@window.event
+@WINDOW.event
 def on_draw():
-  global player
-  global shapes
-  glClear(GL_COLOR_BUFFER_BIT)
-  glColor3f(0.9, 0.9, 0.9)
-  window.clear()
-  fps.draw()
-  draw_rectangle(player.shape.verts,
-                 player.shape.body.position,
-                 player.shape.body.angle)
-  for shape in shapes:
-      if shape[0] == 'poly':
-          draw_rectangle(shape[1].verts,
-                         shape[1].body.position,
-                         shape[1].body.angle)
+    """Clear the window on every frame and draw in game objects."""
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+    gl.glColor3f(0.9, 0.9, 0.9)
+    WINDOW.clear()
+    FPS.draw()
+    draw_rectangle(PLAYER.shape.verts,
+                   PLAYER.shape.body.position,
+                   PLAYER.shape.body.angle)
+    for shape in SHAPES:
+        if shape[0] == 'poly':
+            draw_rectangle(shape[1].verts,
+                           shape[1].body.position,
+                           shape[1].body.angle)
 
 
-@window.event
+@WINDOW.event
 def on_key_press(symbol, modifiers):
-  if symbol not in keys_pressed:
-    keys_pressed.append(symbol)
-      
+    """Add newly pressed keys to the list of pressed keys."""
+    if symbol not in KEYS_PRESSED:
+        KEYS_PRESSED.append(symbol)
 
-@window.event
+
+@WINDOW.event
 def on_key_release(symbol, modifiers):
-  if symbol in keys_pressed:
-      keys_pressed.remove(symbol)
+    """Remove newly release keys to the list of pressed keys."""
+    if symbol in KEYS_PRESSED:
+        KEYS_PRESSED.remove(symbol)
 
 
 if __name__ == '__main__':
-  main()
-
+    main()
