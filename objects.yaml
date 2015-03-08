@@ -24,6 +24,8 @@ objects:
       impulse_left: -10
       impulse_right: 10
       impulse_up: 300
+
+
   # Platform 1.
   - object:
       <<: *static
@@ -35,13 +37,27 @@ objects:
       <<: *static
       friction: 1
       vertices: [[15, 200], [100, 200], [100, 180], [15, 180]]
-      color: 0
-  # Platform goal.
+      color: 1
+  # Platform 3.
+  - object:
+      <<: *static
+      friction: 1
+      vertices: [[200, 300], [500, 300], [500, 280], [200, 280]]
+      color: 2
+  # Platform checkpoint.
   - object:
       <<: *static
       friction: 1
       vertices: [[1045, 140], [1265, 140], [1265, 120], [1045, 120]]
-      color: 0
+      color: 1
+  # Platform goal.
+  - object:
+      <<: *static
+      friction: 1
+      vertices: [[15, 620], [325, 620], [325, 600], [15, 600]]
+      color: 2
+
+
   # Floor.
   - object:
       <<: *static

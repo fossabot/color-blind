@@ -46,7 +46,7 @@ LABEL_2 = pyglet.text.Label('FINISH HERE',
                           font_size=32,
                           color=(75, 75, 75, 255),
                           bold=True,
-                          x=15, y=675)
+                          x=15, y=625)
 
 
 def main():
