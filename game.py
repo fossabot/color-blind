@@ -32,6 +32,21 @@ BINDINGS = rebunch({})
 PLAYER = rebunch({})
 SHAPES = []
 KEYS_PRESSED = []
+LABEL_0 = pyglet.text.Label('START HERE',
+                          font_size=32,
+                          color=(75, 75, 75, 255),
+                          bold=True,
+                          x=15, y=75)
+LABEL_1 = pyglet.text.Label('GO HERE',
+                          font_size=32,
+                          color=(75, 75, 75, 255),
+                          bold=True,
+                          x=1050, y=150)
+LABEL_2 = pyglet.text.Label('FINISH HERE',
+                          font_size=32,
+                          color=(75, 75, 75, 255),
+                          bold=True,
+                          x=15, y=675)
 
 
 def main():
@@ -66,6 +81,7 @@ def setup_physics():
             PLAYER.shape = create_shape(properties)[1]
             PLAYER.shape.body.velocity_limit = properties['velocity_limit']
             PLAYER.properties = properties
+            PLAYER.emit = 0
         else:
             SHAPES.append(create_shape(properties))
 
@@ -122,7 +138,7 @@ def create_segment(properties):
         SPACE.add(shape)
     else:
         SPACE.add(body, shape)
-    return properties['type'], shape
+    return properties, shape
 
 
 def create_poly(properties):
@@ -144,10 +160,10 @@ def create_poly(properties):
         SPACE.add(shape)
     else:
         SPACE.add(body, shape)
-    return properties['type'], shape
+    return properties, shape
 
 
-def draw_rectangle(vertices, position, angle=0):
+def draw_rectangle(vertices, position, angle=0, color=[0.2, 0.2, 0.2]):
     """Draw a rectangle using OpenGL based on the provided spacial information.
 
     Keyword arguments:
@@ -156,6 +172,7 @@ def draw_rectangle(vertices, position, angle=0):
     angle -- draw angle in radians (default 0)
     """
     gl.glPushMatrix()
+    gl.glColor3f(color[0], color[1], color[2])
     gl.glTranslatef(position[0], position[1], 0)
     gl.glRotatef(angle * 57.3, 0, 0, 1)
     gl.glBegin(gl.GL_TRIANGLE_STRIP)
@@ -169,23 +186,49 @@ def draw_rectangle(vertices, position, angle=0):
 def on_draw():
     """Clear the window on every frame and draw in game objects."""
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-    gl.glColor3f(0.9, 0.9, 0.9)
+    gl.glColor3f(0.2, 0.2, 0.2)
     WINDOW.clear()
     FPS.draw()
+    LABEL_0.draw()
+    LABEL_1.draw()
+    LABEL_2.draw()
     draw_rectangle(PLAYER.shape.verts,
                    PLAYER.shape.body.position,
-                   PLAYER.shape.body.angle)
+                   PLAYER.shape.body.angle,
+                   [0.8, 0.8, 0.8])
     for shape in SHAPES:
-        if shape[0] == 'poly':
-            draw_rectangle(shape[1].verts,
-                           shape[1].body.position,
-                           shape[1].body.angle)
+        if shape[0]['type'] == 'poly':
+            if 'color' in shape[0]:
+                draw_rectangle(shape[1].verts,
+                               shape[1].body.position,
+                               shape[1].body.angle,
+                               choose_color(shape[0]['color']))
+            else:
+                draw_rectangle(shape[1].verts,
+                               shape[1].body.position,
+                               shape[1].body.angle)
+
+def choose_color(color):
+    if PLAYER.emit == color:
+        return {
+            0: [0.9, 0.5, 0.5],
+            1: [0.5, 0.9, 0.5],
+            2: [0.5, 0.5, 0.9]
+        }[color]
+    else:
+        return [0.1, 0.1, 0.1]
 
 
 @WINDOW.event
 def on_key_press(symbol, modifiers):
     """Add newly pressed keys to the list of pressed keys."""
-    if symbol not in KEYS_PRESSED:
+    if symbol == BINDINGS.running.movement.emit[0]:
+        PLAYER.emit = {
+            0: 1,
+            1: 2,
+            2: 0
+        }[PLAYER.emit]
+    elif symbol not in KEYS_PRESSED:
         KEYS_PRESSED.append(symbol)
 
 
