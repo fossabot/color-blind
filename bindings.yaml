@@ -1,12 +1,13 @@
 templates:
-  - template: &default
-      name: 'template'
-      action:
-        sub_action: [65361, 65362, 65363]
+  - state: &base
+      name: null
+
+
 states:
   - state:
-      name: 'running'
-      movement:
+      <<: *base
+      name: 'default'
+      actions:
         left: [65361]
         right: [65363]
         jump: [65362]

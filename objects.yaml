@@ -1,81 +1,77 @@
 templates:
-  - template: &dynamic
-      elasticity: 0.5
-      friction: 0.5
-      mass: 1
-      position: [0, 0]
-      type: poly
-      vertices: [[-10, -10], [-10, 10], [10, 10], [10, -10]]
-  - template: &static
-      elasticity: 0.5
-      friction: 0.5
-      mass: null
-      position: [0, 0]
-      type: poly
-      vertices: [[-100, -10], [-100, 10], [100, 10], [100, -10]]
+  - object: &base
+      graphics:
+        color: [0.5, 0.5, 0.5]
+      id: -1
+      physics:
+        body:
+          mass: null
+          moment: null
+          position: [0, 0]
+        shape:
+          elasticity: 0.5
+          friction: 0.5
+          radius: 0
+          type: base
+  - object: &circle
+      <<: *base
+      physics:
+        shape:
+          offset: [0, 0]
+          radius: 0
+          type: circle
+  - object: &poly
+      <<: *base
+      physics:
+        shape:
+          offset: [0, 0]
+          type: poly
+          vertices: [[-10, -10], [10, -10], [10, 10], [-10, 10]]
+  - object: &segment
+      <<: *base
+      physics:
+        shape:
+          a: [-1, 0]
+          b: [1, 0]
+
 objects:
   # Player.
   - object:
-      <<: *dynamic
-      friction: 1
-      position: [180, 30]
-      type: player
-      velocity_limit: 300
-      impulse_left: -10
-      impulse_right: 10
-      impulse_up: 300
+      <<: *circle
+      graphics:
+        color: [0.8, 0.8, 0.8]
+      id: 0
+      physics:
+        body:
+          mass: 1
+          position: [180, 30]
+        shape:
+          friction: 1
+        impulse:
+          left: -10
+          right: 10
+          up: 300
 
 
   # Platform 1.
   - object:
-      <<: *static
-      friction: 1
-      vertices: [[15, 70], [500, 70], [500, 50], [15, 50]]
-      color: 0
-  # Platform 2.
-  - object:
-      <<: *static
-      friction: 1
-      vertices: [[15, 200], [100, 200], [100, 180], [15, 180]]
-      color: 1
-  # Platform 3.
-  - object:
-      <<: *static
-      friction: 1
-      vertices: [[200, 300], [500, 300], [500, 280], [200, 280]]
-      color: 2
-  # Platform checkpoint.
-  - object:
-      <<: *static
-      friction: 1
-      vertices: [[1045, 140], [1265, 140], [1265, 120], [1045, 120]]
-      color: 1
-  # Platform goal.
-  - object:
-      <<: *static
-      friction: 1
-      vertices: [[15, 620], [325, 620], [325, 600], [15, 600]]
-      color: 2
-
+      <<: *poly
+      physics:
+        body:
+          position: [245, 60]
+        shape:
+          friction: 1
+          vertices: [[-240, -10], [240, -10], [240, 10], [-240, 10]]
 
   # Floor.
   - object:
-      <<: *static
-      friction: 1
-      vertices: [[0, 5], [1280, 5], [1280, 0], [0, 0]]
-  # Left wall.
-  - object:
-      <<: *static
-      position: [0, 5]
-      vertices: [[0, 0], [0, 710], [8, 710], [8, 0]]
-  # Ceiling.
-  - object:
-      <<: *static
-      position: [0, 715]
-      vertices: [[0, 5], [1280, 5], [1280, 0], [0, 0]]
-  # Right wall.
-  - object:
-      <<: *static
-      position: [1272, 5]
-      vertices: [[0, 0], [0, 710], [8, 710], [8, 0]]
+      <<: *segment
+      physics:
+        body:
+          position: [640, 5]
+        shape:
+          a: [-640, 0]
+          b: [640, 0]
+          friction: 1
+          radius: 5
 

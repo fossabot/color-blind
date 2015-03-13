@@ -1,13 +1,18 @@
-window:
-  width: 1280
-  height: 720
-opengl:
-  sample_buffers: 1
-  samples: 4
-fps: 60.0
-gravity:
-  x: 0.0
-  y: -500.0
-paths:
-  objects: objects.yaml
-  bindings: bindings.yaml
+graphics:
+  fps: 60.0
+  opengl:
+    sample_buffers: 1
+    samples: 4
+  window:
+    width: 1280
+    height: 720
+
+physics:
+  gravity:
+    x: 0.0
+    y: -500.0
+
+properties:
+  paths:
+    objects: objects.yaml
+    bindings: bindings.yaml
