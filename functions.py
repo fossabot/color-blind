@@ -4,7 +4,7 @@ import pymunk
 
 
 def add_shape(space, body, shape):
-  if body.mass is None:
+  if body.is_static:
     space.add(shape)
   else:
     space.add(body, shape)
@@ -17,7 +17,7 @@ def create_shape(properties):
 
 def create_circle(properties):
   moment = properties.body.moment
-  if moment is None:
+  if properties.body.mass is not None and  moment is None:
     moment = pymunk.moment_for_circle(properties.body.mass, 
                                       0,
                                       properties.shape.radius,
@@ -31,16 +31,54 @@ def create_circle(properties):
 
 
 def create_poly(properties):
-  pass
+  moment = properties.body.moment
+  if properties.body.mass is not None and moment is None:
+    moment = pymunk.moment_for_poly(properties.body.mass, 
+                                    properties.shape.vertices,
+                                    properties.shape.offset)
+  body = pymunk.Body(properties.body.mass, moment)
+  body.position = properties.body.position
+  shape = pymunk.Poly(body,
+                      properties.shape.vertices,
+                      properties.shape.offset,
+                      properties.shape.radius)
+  shape.elasticity = properties.shape.elasticity
+  shape.friction = properties.shape.friction
+  return body, shape
 
 
-def create_segment():
-  pass
+def create_segment(properties):
+  moment = properties.body.moment
+  if properties.body.mass is not None and moment is None:
+    moment = pymunk.moment_for_segment(properties.body.mass, 
+                                      properties.shape.a,
+                                      properties.shape.b)
+  body = pymunk.Body(properties.body.mass, moment)
+  body.position = properties.body.position
+  shape = pymunk.Segment(body,
+                         properties.shape.a,
+                         properties.shape.b,
+                         properties.shape.radius)
+  shape.elasticity = properties.shape.elasticity
+  shape.friction = properties.shape.friction
+  return body, shape
+
+
+def draw_segment(position, a, b, radius, color=(0.5, 0.5, 0.5)):
+    gl.glPushMatrix()
+    gl.glColor3f(color[0], color[1], color[2])
+    gl.glTranslatef(position[0], position[1], 0)
+    gl.glLineWidth(radius)
+    gl.glBegin(gl.GL_LINES)
+    gl.glVertex2f(a[0], a[1])
+    gl.glVertex2f(b[0], b[1])
+    gl.glEnd()
+    gl.glPopMatrix()
 
 
 def draw_circle(position, radius, color=(0.5, 0.5, 0.5)):
-  vertices = [(-radius, radius),
-              (-radius, -radius),
+  vertices = [(-radius, -radius),
+              (-radius, radius),
               (radius, radius),
               (radius, -radius)]
   draw_rectangle(vertices, position, 0, color)
@@ -59,8 +97,7 @@ def draw_rectangle(vertices, position, angle=0, color=(0.5, 0.5, 0.5)):
     gl.glTranslatef(position[0], position[1], 0)
     gl.glRotatef(angle * 57.3, 0, 0, 1)
     gl.glBegin(gl.GL_TRIANGLE_STRIP)
-    #for vertex in vertices[:2] + vertices[:1:-1]:
-    for vertex in vertices:
+    for vertex in vertices[:2] + vertices[:1:-1]:
         gl.glVertex2f(vertex[0], vertex[1])
     gl.glEnd()
     gl.glPopMatrix()

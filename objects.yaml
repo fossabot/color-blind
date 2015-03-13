@@ -42,49 +42,117 @@ aliases:
         <<: *base_physics
         shape: &segment_physics_shape
           <<: *base_physics_shape
-          a: !!python/tuple [-1, 0]
-          b: !!python/tuple [1, 0]
+          a: !!python/tuple [-10, 0]
+          b: !!python/tuple [10, 0]
+          radius: 2
         type: segment
 
 objects:
   # Player.
   - <<: *circle
-    graphics:
-      <<: *base_graphics
-      color: !!python/tuple [0.8, 0.8, 0.8]
     id: 0
     physics:
       <<: *circle_physics
       body:
         <<: *base_physics_body
         mass: 1
-        position: !!python/tuple [640, 720]
-      shape:
-        <<: *circle_physics_shape
-        friction: 1
+        position: !!python/tuple [640, 600]
       impulse:
         left: -10
         right: 10
-        up: 300
-
+        up: 50
 
   # Platform 1.
   - <<: *poly
+    id: 1
     physics:
+      <<: *poly_physics
       body:
-        position: [245, 60]
+        <<: *base_physics_body
+        position: !!python/tuple [245, 60]
       shape:
-        friction: 1
-        vertices: [[-240, -10], [240, -10], [240, 10], [-240, 10]]
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-240, -10]
+          - !!python/tuple [240, -10]
+          - !!python/tuple [240, 10]
+          - !!python/tuple [-240, 10]
 
   # Floor.
-  - <<: *segment
+  - <<: *poly
+    id: 2
     physics:
+      <<: *poly_physics
       body:
-        position: [640, 5]
+        <<: *base_physics_body
+        position: !!python/tuple [640, -195]
       shape:
-        a: [-640, 0]
-        b: [640, 0]
-        friction: 1
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-640, -200]
+          - !!python/tuple [640, -200]
+          - !!python/tuple [640, 200]
+          - !!python/tuple [-640, 200]
+
+  # Ceiling.
+  - <<: *poly
+    id: 3
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [640, 915]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-640, -200]
+          - !!python/tuple [640, -200]
+          - !!python/tuple [640, 200]
+          - !!python/tuple [-640, 200]
+
+  # Left wall.
+  - <<: *poly
+    id: 4
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [-195, 360]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-200, -360]
+          - !!python/tuple [200, -360]
+          - !!python/tuple [200, 360]
+          - !!python/tuple [-200, 360]
+            
+  # Right wall.
+  - <<: *poly
+    id: 5
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1475, 360]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-200, -360]
+          - !!python/tuple [200, -360]
+          - !!python/tuple [200, 360]
+          - !!python/tuple [-200, 360]
+
+  # Line.
+  - <<: *segment
+    id: 6
+    physics:
+      <<: *segment_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [800, 600]
+      shape:
+        <<: *segment_physics_shape
+        a: !!python/tuple [-100, 50]
+        b: !!python/tuple [400, -200]
         radius: 5
 

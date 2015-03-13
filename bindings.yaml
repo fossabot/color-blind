@@ -2,7 +2,6 @@ aliases:
   - &base
       name: null
 
-
 states:
   - <<: *base
     name: 'default'
@@ -10,5 +9,4 @@ states:
       left: [65361]
       right: [65363]
       jump: [65362]
-      emit: [32]
 

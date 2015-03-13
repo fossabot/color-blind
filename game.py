@@ -58,6 +58,8 @@ def setup_physics():
             shape = functions.add_shape(SPACE, body, shape)
             PLAYER.shape = shape
             PLAYER.properties = properties
+            PLAYER.shape.body.velocity_limit = SETTINGS.physics.limit
+            PLAYER.shape.body.inertia = pymunk.inf
         else:
             body, shape = functions.create_shape(properties.physics)
             shape = functions.add_shape(SPACE, body, shape)
@@ -74,11 +76,14 @@ def update(dt):
     dt -- the change in time since the previously rendered frame
     """
     if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.left):
-        PLAYER.shape.body.apply_impulse((PLAYER.properties.impulse_left, 0))
+        PLAYER.shape.body.apply_impulse(
+            (PLAYER.properties.physics.impulse.left, 0))
     if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.right):
-        PLAYER.shape.body.apply_impulse((PLAYER.properties.impulse_right, 0))
+        PLAYER.shape.body.apply_impulse(
+            (PLAYER.properties.physics.impulse.right, 0))
     if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.jump):
-        PLAYER.shape.body.apply_impulse((0, PLAYER.properties.impulse_up))
+        PLAYER.shape.body.apply_impulse(
+            (0, PLAYER.properties.physics.impulse.up))
     SPACE.step(dt)
 
 
@@ -93,11 +98,17 @@ def on_draw():
                           PLAYER.shape.radius,
                           PLAYER.properties.graphics.color)
     for shape in SHAPES:
-        if shape[0]['type'] == 'poly':
-            functions.draw_rectangle(shape[1].verts,
-                                     shape[1].body.position,
-                                     shape[1].body.angle,
+        if shape.properties.physics.type == 'poly':
+            functions.draw_rectangle(shape.shape.verts,
+                                     shape.shape.body.position,
+                                     shape.shape.body.angle,
                                      [0.8, 0.8, 0.8])
+        elif shape.properties.physics.type == 'segment':
+            functions.draw_segment(shape.shape.body.position,
+                                   shape.shape.a,
+                                   shape.shape.b,
+                                   shape.shape.radius,
+                                   [0.8, 0.8, 0.8])
 
 
 @WINDOW.event
