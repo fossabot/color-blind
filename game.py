@@ -12,7 +12,8 @@ CONFIG = pyglet.gl.Config(
     samples=SETTINGS.graphics.opengl.samples)
 WINDOW = pyglet.window.Window(width=SETTINGS.graphics.window.width,
                               height=SETTINGS.graphics.window.height,
-                              config=CONFIG)
+                              config=CONFIG,
+                              resizable=True)
 FPS = pyglet.clock.ClockDisplay()
 SPACE = pymunk.Space()
 BINDINGS = functions.rebunch({})
@@ -52,13 +53,18 @@ def setup_physics():
         if properties.id == -1:
             logging.warning('attempt to create object with no id set')
         elif properties.id == 0:
-            logging.warn(properties)
+            #TODO(mraxilus): remove, can identify player by id.
             body, shape = functions.create_shape(properties.physics)
-            #TODO(mraxilus): adde body and shape to world space.
+            shape = functions.add_shape(SPACE, body, shape)
             PLAYER.shape = shape
             PLAYER.properties = properties
         else:
-            SHAPES.append(functions.create_shape(properties))
+            body, shape = functions.create_shape(properties.physics)
+            shape = functions.add_shape(SPACE, body, shape)
+            SHAPES.append(functions.rebunch({
+                'shape': shape,
+                'properties': properties
+            }))
 
 
 def update(dt):
@@ -67,11 +73,11 @@ def update(dt):
     Keyword arguments:
     dt -- the change in time since the previously rendered frame
     """
-    if any(k in KEYS_PRESSED for k in BINDINGS.default.movement.left):
+    if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.left):
         PLAYER.shape.body.apply_impulse((PLAYER.properties.impulse_left, 0))
-    if any(k in KEYS_PRESSED for k in BINDINGS.default.movement.right):
+    if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.right):
         PLAYER.shape.body.apply_impulse((PLAYER.properties.impulse_right, 0))
-    if any(k in KEYS_PRESSED for k in BINDINGS.default.movement.jump):
+    if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.jump):
         PLAYER.shape.body.apply_impulse((0, PLAYER.properties.impulse_up))
     SPACE.step(dt)
 
@@ -83,36 +89,21 @@ def on_draw():
     gl.glColor3f(0.2, 0.2, 0.2)
     WINDOW.clear()
     FPS.draw()
-    LABEL_0.draw()
-    LABEL_1.draw()
-    LABEL_2.draw()
-    draw_rectangle(PLAYER.shape.verts,
-                   PLAYER.shape.body.position,
-                   PLAYER.shape.body.angle,
-                   [0.8, 0.8, 0.8])
+    functions.draw_circle(PLAYER.shape.body.position,
+                          PLAYER.shape.radius,
+                          PLAYER.properties.graphics.color)
     for shape in SHAPES:
         if shape[0]['type'] == 'poly':
-            if 'color' in shape[0]:
-                draw_rectangle(shape[1].verts,
-                               shape[1].body.position,
-                               shape[1].body.angle,
-                               choose_color(shape[0]['color']))
-            else:
-                draw_rectangle(shape[1].verts,
-                               shape[1].body.position,
-                               shape[1].body.angle)
+            functions.draw_rectangle(shape[1].verts,
+                                     shape[1].body.position,
+                                     shape[1].body.angle,
+                                     [0.8, 0.8, 0.8])
 
 
 @WINDOW.event
 def on_key_press(symbol, modifiers):
     """Add newly pressed keys to the list of pressed keys."""
-    if symbol == BINDINGS.running.movement.emit[0]:
-        PLAYER.emit = {
-            0: 1,
-            1: 2,
-            2: 0
-        }[PLAYER.emit]
-    elif symbol not in KEYS_PRESSED:
+    if symbol not in KEYS_PRESSED:
         KEYS_PRESSED.append(symbol)
 
 

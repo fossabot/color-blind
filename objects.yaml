@@ -58,7 +58,7 @@ objects:
       body:
         <<: *base_physics_body
         mass: 1
-        position: !!python/tuple [180, 30]
+        position: !!python/tuple [640, 720]
       shape:
         <<: *circle_physics_shape
         friction: 1
