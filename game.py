@@ -62,7 +62,6 @@ def setup_physics():
             PLAYER.shape = shape
             PLAYER.properties = properties
             PLAYER.shape.body.velocity_limit = SETTINGS.physics.limit
-            PLAYER.shape.body.inertia = pymunk.inf
         else:
             body, shape = functions.create_shape(properties.physics)
             shape = functions.add_shape(SPACE, body, shape)
@@ -80,10 +79,12 @@ def update(dt):
     """
     if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.left):
         PLAYER.shape.body.apply_impulse(
-            (PLAYER.properties.physics.impulse.left, 0))
+            (PLAYER.properties.physics.impulse.left, 0),
+            (0, PLAYER.shape.radius))
     if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.right):
         PLAYER.shape.body.apply_impulse(
-            (PLAYER.properties.physics.impulse.right, 0))
+            (PLAYER.properties.physics.impulse.right, 0),
+            (0, PLAYER.shape.radius))
     if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.jump):
         PLAYER.shape.body.apply_impulse(
             (0, PLAYER.properties.physics.impulse.up))
