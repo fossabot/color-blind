@@ -9,6 +9,7 @@ aliases:
           moment: null
           position: !!python/tuple [0, 0]
         shape: &base_physics_shape
+          collision_type: -1
           elasticity: 0.5
           friction: 0.5
           radius: 0
@@ -60,7 +61,11 @@ objects:
       impulse:
         left: -10
         right: 10
-        up: 50
+        up: 400
+      shape:
+        <<: *circle_physics_shape
+        collision_type: 0
+        elasticity: 0
 
   # Platform 1.
   - <<: *poly
@@ -72,6 +77,7 @@ objects:
         position: !!python/tuple [245, 60]
       shape:
         <<: *poly_physics_shape
+        collision_type: 1
         vertices:
           - !!python/tuple [-240, -10]
           - !!python/tuple [240, -10]
@@ -88,6 +94,7 @@ objects:
         position: !!python/tuple [640, -195]
       shape:
         <<: *poly_physics_shape
+        collision_type: 1
         vertices:
           - !!python/tuple [-640, -200]
           - !!python/tuple [640, -200]

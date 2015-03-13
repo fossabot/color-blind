@@ -27,6 +27,7 @@ def create_circle(properties):
   shape = pymunk.Circle(body, properties.shape.radius, properties.shape.offset)
   shape.elasticity = properties.shape.elasticity
   shape.friction = properties.shape.friction
+  shape.collision_type = properties.shape.collision_type
   return body, shape
 
 
@@ -44,6 +45,7 @@ def create_poly(properties):
                       properties.shape.radius)
   shape.elasticity = properties.shape.elasticity
   shape.friction = properties.shape.friction
+  shape.collision_type = properties.shape.collision_type
   return body, shape
 
 
@@ -61,6 +63,7 @@ def create_segment(properties):
                          properties.shape.radius)
   shape.elasticity = properties.shape.elasticity
   shape.friction = properties.shape.friction
+  shape.collision_type = properties.shape.collision_type
   return body, shape
 
 

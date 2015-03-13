@@ -3,6 +3,7 @@ import logging
 import pyglet
 import pyglet.gl as gl
 import pymunk
+import time
 import yaml
 
 
@@ -18,7 +19,7 @@ FPS = pyglet.clock.ClockDisplay()
 SPACE = pymunk.Space()
 BINDINGS = functions.rebunch({})
 PLAYER = functions.rebunch({})
-KEYS_PRESSED = []
+KEYS_PRESSED = functions.rebunch({})
 SHAPES = []
 
 
@@ -62,6 +63,7 @@ def setup_physics():
             PLAYER.shape = shape
             PLAYER.properties = properties
             PLAYER.shape.body.velocity_limit = SETTINGS.physics.limit
+            PLAYER.collisions = 0
         else:
             body, shape = functions.create_shape(properties.physics)
             shape = functions.add_shape(SPACE, body, shape)
@@ -69,6 +71,14 @@ def setup_physics():
                 'shape': shape,
                 'properties': properties
             }))
+    SPACE.add_collision_handler(0, 1, 
+            begin=lambda *x: add_collision(PLAYER, 1),
+            separate=lambda *x: add_collision(PLAYER, -1))
+
+
+def add_collision(object_, count):
+    object_.collisions += count
+    return True
 
 
 def update(dt):
@@ -77,18 +87,33 @@ def update(dt):
     Keyword arguments:
     dt -- the change in time since the previously rendered frame
     """
-    if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.left):
+    if is_key_pressed(KEYS_PRESSED, BINDINGS.default.actions.left): 
         PLAYER.shape.body.apply_impulse(
             (PLAYER.properties.physics.impulse.left, 0),
             (0, PLAYER.shape.radius))
-    if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.right):
+    if is_key_pressed(KEYS_PRESSED, BINDINGS.default.actions.right): 
         PLAYER.shape.body.apply_impulse(
             (PLAYER.properties.physics.impulse.right, 0),
             (0, PLAYER.shape.radius))
-    if any(k in KEYS_PRESSED for k in BINDINGS.default.actions.jump):
+    duration = get_duration(KEYS_PRESSED, BINDINGS.default.actions.jump) 
+    if duration is not None and PLAYER.collisions > 0:
         PLAYER.shape.body.apply_impulse(
             (0, PLAYER.properties.physics.impulse.up))
+
+    PLAYER.shape.body.angular_velocity *= SETTINGS.physics.damping
     SPACE.step(dt)
+
+
+def is_key_pressed(keys_pressed, symbol):
+    return symbol in keys_pressed.keys() and keys_pressed[symbol] is not None
+
+
+def get_duration(keys_pressed, symbol):
+    duration = None
+    for key, time_start in keys_pressed.items():
+        if key == symbol and time_start is not None: 
+            duration = time.time() - time_start
+    return duration
 
 
 @WINDOW.event
@@ -108,15 +133,13 @@ def on_draw():
 @WINDOW.event
 def on_key_press(symbol, modifiers):
     """Add newly pressed keys to the list of pressed keys."""
-    if symbol not in KEYS_PRESSED:
-        KEYS_PRESSED.append(symbol)
+    KEYS_PRESSED[symbol] = time.time()
 
 
 @WINDOW.event
 def on_key_release(symbol, modifiers):
     """Remove newly release keys to the list of pressed keys."""
-    if symbol in KEYS_PRESSED:
-        KEYS_PRESSED.remove(symbol)
+    KEYS_PRESSED[symbol] = None
 
 
 if __name__ == '__main__':

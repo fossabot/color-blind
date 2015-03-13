@@ -6,7 +6,7 @@ states:
   - <<: *base
     name: 'default'
     actions:
-      left: [65361]
-      right: [65363]
-      jump: [65362]
+      left: 65361
+      right: 65363
+      jump: 65362
 
