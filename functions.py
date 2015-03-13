@@ -64,7 +64,16 @@ def create_segment(properties):
   return body, shape
 
 
-def draw_segment(position, a, b, radius, color=(0.5, 0.5, 0.5)):
+def draw_shape(shape, properties):
+  globals()['draw_' + properties.physics.type](shape, properties)
+
+
+def draw_segment(shape, properties):
+    position = shape.body.position
+    a = shape.a
+    b = shape.b
+    radius = shape.radius
+    color = properties.graphics.color
     gl.glPushMatrix()
     gl.glColor3f(color[0], color[1], color[2])
     gl.glTranslatef(position[0], position[1], 0)
@@ -76,15 +85,25 @@ def draw_segment(position, a, b, radius, color=(0.5, 0.5, 0.5)):
     gl.glPopMatrix()
 
 
-def draw_circle(position, radius, color=(0.5, 0.5, 0.5)):
+def draw_circle(shape, properties):
+  position = shape.body.position
+  radius = shape.radius
+  color = properties.graphics.color
   vertices = [(-radius, -radius),
               (-radius, radius),
               (radius, radius),
               (radius, -radius)]
-  draw_rectangle(vertices, position, 0, color)
+  gl.glPushMatrix()
+  gl.glColor3f(color[0], color[1], color[2])
+  gl.glTranslatef(position[0], position[1], 0)
+  gl.glBegin(gl.GL_TRIANGLE_STRIP)
+  for vertex in vertices[:2] + vertices[:1:-1]:
+      gl.glVertex2f(vertex[0], vertex[1])
+  gl.glEnd()
+  gl.glPopMatrix()
 
 
-def draw_rectangle(vertices, position, angle=0, color=(0.5, 0.5, 0.5)):
+def draw_poly(shape, properties):
     """Draw a rectangle using OpenGL based on the provided spacial information.
 
     Keyword arguments:
@@ -92,6 +111,10 @@ def draw_rectangle(vertices, position, angle=0, color=(0.5, 0.5, 0.5)):
     position -- x and y position to start the operation
     angle -- draw angle in radians (default 0)
     """
+    vertices = shape.verts
+    position = shape.body.position
+    angle = shape.body.angle
+    color = properties.graphics.color
     gl.glPushMatrix()
     gl.glColor3f(color[0], color[1], color[2])
     gl.glTranslatef(position[0], position[1], 0)

@@ -41,6 +41,10 @@ def setup_bindings():
 def setup_graphics():
     """Setup OpenGL and related graphical utilities."""
     gl.glClearColor(0.1, 0.1, 0.1, 0.1)
+    gl.glClearColor(SETTINGS.graphics.background[0],
+                    SETTINGS.graphics.background[1],
+                    SETTINGS.graphics.background[2],
+                    SETTINGS.graphics.background[3])
 
 
 def setup_physics():
@@ -91,24 +95,14 @@ def update(dt):
 def on_draw():
     """Clear the window on every frame and draw in game objects."""
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-    gl.glColor3f(0.2, 0.2, 0.2)
+    gl.glColor3f(SETTINGS.graphics.background[0],
+                 SETTINGS.graphics.background[1],
+                 SETTINGS.graphics.background[2])
     WINDOW.clear()
     FPS.draw()
-    functions.draw_circle(PLAYER.shape.body.position,
-                          PLAYER.shape.radius,
-                          PLAYER.properties.graphics.color)
+    functions.draw_shape(PLAYER.shape, PLAYER.properties)
     for shape in SHAPES:
-        if shape.properties.physics.type == 'poly':
-            functions.draw_rectangle(shape.shape.verts,
-                                     shape.shape.body.position,
-                                     shape.shape.body.angle,
-                                     [0.8, 0.8, 0.8])
-        elif shape.properties.physics.type == 'segment':
-            functions.draw_segment(shape.shape.body.position,
-                                   shape.shape.a,
-                                   shape.shape.b,
-                                   shape.shape.radius,
-                                   [0.8, 0.8, 0.8])
+        functions.draw_shape(shape.shape, shape.properties)
 
 
 @WINDOW.event
