@@ -1,15 +1,14 @@
-templates:
-  - state: &base
+aliases:
+  - &base
       name: null
 
 
 states:
-  - state:
-      <<: *base
-      name: 'default'
-      actions:
-        left: [65361]
-        right: [65363]
-        jump: [65362]
-        emit: [32]
+  - <<: *base
+    name: 'default'
+    actions:
+      left: [65361]
+      right: [65363]
+      jump: [65362]
+      emit: [32]
 

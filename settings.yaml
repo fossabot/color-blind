@@ -12,7 +12,6 @@ physics:
     x: 0.0
     y: -500.0
 
-properties:
-  paths:
-    objects: objects.yaml
-    bindings: bindings.yaml
+paths:
+  objects: objects.yaml
+  bindings: bindings.yaml

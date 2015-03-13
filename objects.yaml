@@ -1,77 +1,90 @@
-templates:
-  - object: &base
-      graphics:
-        color: [0.5, 0.5, 0.5]
+aliases:
+  - &base
+      graphics: &base_graphics
+        color: !!python/tuple [0.5, 0.5, 0.5]
       id: -1
-      physics:
-        body:
+      physics: &base_physics
+        body: &base_physics_body
           mass: null
           moment: null
-          position: [0, 0]
-        shape:
+          position: !!python/tuple [0, 0]
+        shape: &base_physics_shape
           elasticity: 0.5
           friction: 0.5
           radius: 0
-          type: base
-  - object: &circle
+        type: base
+  - &circle
       <<: *base
-      physics:
-        shape:
-          offset: [0, 0]
-          radius: 0
-          type: circle
-  - object: &poly
+      physics: &circle_physics
+        <<: *base_physics
+        shape: &circle_physics_shape
+          <<: *base_physics_shape
+          offset: !!python/tuple [0, 0]
+          radius: 10
+        type: circle
+  - &poly
       <<: *base
-      physics:
-        shape:
-          offset: [0, 0]
+      physics: &poly_physics
+        <<: *base_physics
+        shape: &poly_physics_shape
+          <<: *base_physics_shape
+          offset: !!python/tuple [0, 0]
           type: poly
-          vertices: [[-10, -10], [10, -10], [10, 10], [-10, 10]]
-  - object: &segment
+          vertices: 
+            - !!python/tuple [-10, -10]
+            - !!python/tuple [10, -10]
+            - !!python/tuple [10, 10]
+            - !!python/tuple [-10, 10]
+        type: poly
+  - &segment
       <<: *base
-      physics:
-        shape:
-          a: [-1, 0]
-          b: [1, 0]
+      physics: &segment_physics
+        <<: *base_physics
+        shape: &segment_physics_shape
+          <<: *base_physics_shape
+          a: !!python/tuple [-1, 0]
+          b: !!python/tuple [1, 0]
+        type: segment
 
 objects:
   # Player.
-  - object:
-      <<: *circle
-      graphics:
-        color: [0.8, 0.8, 0.8]
-      id: 0
-      physics:
-        body:
-          mass: 1
-          position: [180, 30]
-        shape:
-          friction: 1
-        impulse:
-          left: -10
-          right: 10
-          up: 300
+  - <<: *circle
+    graphics:
+      <<: *base_graphics
+      color: !!python/tuple [0.8, 0.8, 0.8]
+    id: 0
+    physics:
+      <<: *circle_physics
+      body:
+        <<: *base_physics_body
+        mass: 1
+        position: !!python/tuple [180, 30]
+      shape:
+        <<: *circle_physics_shape
+        friction: 1
+      impulse:
+        left: -10
+        right: 10
+        up: 300
 
 
   # Platform 1.
-  - object:
-      <<: *poly
-      physics:
-        body:
-          position: [245, 60]
-        shape:
-          friction: 1
-          vertices: [[-240, -10], [240, -10], [240, 10], [-240, 10]]
+  - <<: *poly
+    physics:
+      body:
+        position: [245, 60]
+      shape:
+        friction: 1
+        vertices: [[-240, -10], [240, -10], [240, 10], [-240, 10]]
 
   # Floor.
-  - object:
-      <<: *segment
-      physics:
-        body:
-          position: [640, 5]
-        shape:
-          a: [-640, 0]
-          b: [640, 0]
-          friction: 1
-          radius: 5
+  - <<: *segment
+    physics:
+      body:
+        position: [640, 5]
+      shape:
+        a: [-640, 0]
+        b: [640, 0]
+        friction: 1
+        radius: 5
 
