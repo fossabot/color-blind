@@ -40,7 +40,6 @@ def setup_bindings():
 
 def setup_graphics():
     """Setup OpenGL and related graphical utilities."""
-    gl.glClearColor(0.1, 0.1, 0.1, 0.1)
     gl.glClearColor(SETTINGS.graphics.background[0],
                     SETTINGS.graphics.background[1],
                     SETTINGS.graphics.background[2],
