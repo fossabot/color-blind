@@ -14,5 +14,5 @@ physics:
   gravity: !!python/tuple [0.0, -500]
 
 paths:
-  objects: objects.yaml
-  bindings: bindings.yaml
+  objects: config/objects.yaml
+  bindings: config/bindings.yaml

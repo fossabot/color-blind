@@ -7,7 +7,7 @@ import time
 import yaml
 
 
-SETTINGS = helpers.rebunch(yaml.load(file('settings.yaml', 'r')))
+SETTINGS = helpers.rebunch(yaml.load(file('config/settings.yaml', 'r')))
 CONFIG = pyglet.gl.Config(
     sample_buffers=SETTINGS.graphics.opengl.sample_buffers,
     samples=SETTINGS.graphics.opengl.samples)
