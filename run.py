@@ -69,13 +69,8 @@ def setup_physics():
                 'properties': properties
             }))
     SPACE.add_collision_handler(0, 1, 
-            begin=lambda *x: add_collision(PLAYER, 1),
-            separate=lambda *x: add_collision(PLAYER, -1))
-
-
-def add_collision(object_, count):
-    object_.collisions += count
-    return True
+            begin=lambda *x: helpers.add_collision(PLAYER, 1),
+            separate=lambda *x: helpers.add_collision(PLAYER, -1))
 
 
 def update(dt):
@@ -84,17 +79,19 @@ def update(dt):
     Keyword arguments:
     dt -- the change in time since the previously rendered frame
     """
-    duration = get_duration(KEYS_PRESSED, BINDINGS.default.actions.left) 
+    duration = helpers.get_pressed_duration(KEYS_PRESSED,
+                                            BINDINGS.default.actions.left) 
     if duration is not None and PLAYER.collisions > 0:
         PLAYER.shape.body.apply_impulse(
             (PLAYER.properties.physics.impulse.left, 0),
             (0, PLAYER.shape.radius))
-    duration = get_duration(KEYS_PRESSED, BINDINGS.default.actions.right) 
+    duration = helpers.get_pressed_duration(KEYS_PRESSED,
+                                            BINDINGS.default.actions.right) 
     if duration is not None and PLAYER.collisions > 0:
         PLAYER.shape.body.apply_impulse(
             (PLAYER.properties.physics.impulse.right, 0),
             (0, PLAYER.shape.radius))
-    duration = get_duration(KEYS_PRESSED, BINDINGS.default.actions.jump) 
+    duration = helpers.get_pressed_duration(KEYS_PRESSED, BINDINGS.default.actions.jump) 
     if duration is not None and PLAYER.collisions > 0:
         PLAYER.shape.body.apply_impulse(
             (0, PLAYER.properties.physics.impulse.up))
@@ -105,18 +102,6 @@ def update(dt):
     if queries is not None:
         print(queries[1].get_hit_point())
     SPACE.step(dt)
-
-
-def is_key_pressed(keys_pressed, symbol):
-    return symbol in keys_pressed.keys() and keys_pressed[symbol] is not None
-
-
-def get_duration(keys_pressed, symbol):
-    duration = None
-    for key, time_start in keys_pressed.items():
-        if key == symbol and time_start is not None: 
-            duration = time.time() - time_start
-    return duration
 
 
 @WINDOW.event

@@ -1,6 +1,11 @@
 import pymunk
 
 
+def add_collision(object_, count):
+    object_.collisions += count
+    return True
+
+
 def add_shape(space, body, shape):
   if body.is_static:
     space.add(shape)
