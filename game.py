@@ -1,4 +1,4 @@
-import functions
+import helpers as functions
 import logging
 import pyglet
 import pyglet.gl as gl
