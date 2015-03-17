@@ -61,7 +61,7 @@ objects:
       impulse:
         left: -10
         right: 10
-        up: 500
+        up: 350
       shape:
         <<: *circle_physics_shape
         collision_type: 0

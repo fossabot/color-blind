@@ -13,14 +13,12 @@ CONFIG = pyglet.gl.Config(
     samples=SETTINGS.graphics.opengl.samples)
 WINDOW = pyglet.window.Window(width=SETTINGS.graphics.window.width,
                               height=SETTINGS.graphics.window.height,
-                              config=CONFIG,
-                              resizable=True)
+                              config=CONFIG)
 FPS = pyglet.clock.ClockDisplay()
 SPACE = pymunk.Space()
 BINDINGS = helpers.rebunch({})
-PLAYER = helpers.rebunch({})
 KEYS_PRESSED = helpers.rebunch({})
-SHAPES = []
+SHAPES = helpers.rebunch({})
 
 
 def main():
@@ -53,24 +51,17 @@ def setup_physics():
     for properties in objects:
         if properties.id == -1:
             logging.warning('attempt to create object with no id set')
-        elif properties.id == 0:
-            #TODO(mraxilus): remove, can identify player by id.
-            shape = helpers.create_shape(properties.physics)
-            helpers.add_shape(SPACE, shape.body, shape)
-            PLAYER.shape = shape
-            PLAYER.properties = properties
-            PLAYER.shape.body.velocity_limit = SETTINGS.physics.limit
-            PLAYER.collisions = 0
         else:
             shape = helpers.create_shape(properties.physics)
             helpers.add_shape(SPACE, shape.body, shape)
-            SHAPES.append(helpers.rebunch({
+            SHAPES[properties.id] = helpers.rebunch({
                 'shape': shape,
-                'properties': properties
-            }))
+                'properties': properties,
+                'collisions': 0
+            })
     SPACE.add_collision_handler(0, 1, 
-            begin=lambda *x: helpers.add_collision(PLAYER, 1),
-            separate=lambda *x: helpers.add_collision(PLAYER, -1))
+            begin=lambda *x: helpers.add_collision(SHAPES[0], 1),
+            separate=lambda *x: helpers.add_collision(SHAPES[0], -1))
 
 
 def update(dt):
@@ -81,23 +72,23 @@ def update(dt):
     """
     duration = helpers.get_pressed_duration(KEYS_PRESSED,
                                             BINDINGS.default.actions.left) 
-    if duration is not None and PLAYER.collisions > 0:
-        PLAYER.shape.body.apply_impulse(
-            (PLAYER.properties.physics.impulse.left, 0),
-            (0, PLAYER.shape.radius))
+    if duration is not None and SHAPES[0].collisions > 0:
+        SHAPES[0].shape.body.apply_impulse(
+            (SHAPES[0].properties.physics.impulse.left, 0),
+            (0, SHAPES[0].shape.radius))
     duration = helpers.get_pressed_duration(KEYS_PRESSED,
                                             BINDINGS.default.actions.right) 
-    if duration is not None and PLAYER.collisions > 0:
-        PLAYER.shape.body.apply_impulse(
-            (PLAYER.properties.physics.impulse.right, 0),
-            (0, PLAYER.shape.radius))
+    if duration is not None and SHAPES[0].collisions > 0:
+        SHAPES[0].shape.body.apply_impulse(
+            (SHAPES[0].properties.physics.impulse.right, 0),
+            (0, SHAPES[0].shape.radius))
     duration = helpers.get_pressed_duration(KEYS_PRESSED, BINDINGS.default.actions.jump) 
-    if duration is not None and PLAYER.collisions > 0:
-        PLAYER.shape.body.apply_impulse(
-            (0, PLAYER.properties.physics.impulse.up))
+    if duration is not None and SHAPES[0].collisions > 0:
+        SHAPES[0].shape.body.apply_impulse(
+            (0, SHAPES[0].properties.physics.impulse.up))
 
-    PLAYER.shape.body.angular_velocity *= SETTINGS.physics.damping
-    queries = SPACE.segment_query(PLAYER.shape.body.position, (1280, 720))
+    SHAPES[0].shape.body.angular_velocity *= SETTINGS.physics.damping
+    queries = SPACE.segment_query(SHAPES[0].shape.body.position, (1280, 720))
     queries = sorted(queries, key=lambda x: x.t)
     if queries is not None:
         print(queries[1].get_hit_point())
@@ -111,8 +102,7 @@ def on_draw():
     gl.glColor4f(*SETTINGS.graphics.background)
     WINDOW.clear()
     FPS.draw()
-    helpers.draw_shape(PLAYER.shape, PLAYER.properties)
-    for shape in SHAPES:
+    for id_, shape in SHAPES.items():
         helpers.draw_shape(shape.shape, shape.properties)
 
 
