@@ -101,6 +101,10 @@ def update(dt):
             (0, PLAYER.properties.physics.impulse.up))
 
     PLAYER.shape.body.angular_velocity *= SETTINGS.physics.damping
+    queries = SPACE.segment_query(PLAYER.shape.body.position, (1280, 720))
+    queries = sorted(queries, key=lambda x: x.t)
+    if queries is not None:
+        print(queries[1].get_hit_point())
     SPACE.step(dt)
 
 

@@ -67,6 +67,15 @@ def create_segment(properties):
   return body, shape
 
 
+def create_ray(parent, a, b):
+  moment = pymunk.moment_for_segment(1, a, b)
+  body = pymunk.Body(1, moment)
+  body.position = parent.position
+  shape = pymunk.Segment(body, a, b, 2)
+  shape.collision_type = 100
+  return shape
+
+
 def draw_shape(shape, properties):
   globals()['draw_' + properties.physics.type](shape, properties)
 
