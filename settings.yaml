@@ -11,9 +11,7 @@ graphics:
 physics:
   damping: 0.1
   limit: 300
-  gravity:
-    x: 0.0
-    y: -500
+  gravity: !!python/tuple [0.0, -500]
 
 paths:
   objects: objects.yaml

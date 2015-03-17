@@ -41,15 +41,12 @@ def setup_bindings():
 
 def setup_graphics():
     """Setup OpenGL and related graphical utilities."""
-    gl.glClearColor(SETTINGS.graphics.background[0],
-                    SETTINGS.graphics.background[1],
-                    SETTINGS.graphics.background[2],
-                    SETTINGS.graphics.background[3])
+    gl.glClearColor(*SETTINGS.graphics.background)
 
 
 def setup_physics():
     """Setup physics engine and initialise the world space."""
-    SPACE.gravity = (SETTINGS.physics.gravity.x, SETTINGS.physics.gravity.y)
+    SPACE.gravity = SETTINGS.physics.gravity
     objects = []
     for properties in yaml.load(file(SETTINGS.paths.objects, 'r'))['objects']:
         objects.append(functions.rebunch(properties))
@@ -58,15 +55,15 @@ def setup_physics():
             logging.warning('attempt to create object with no id set')
         elif properties.id == 0:
             #TODO(mraxilus): remove, can identify player by id.
-            body, shape = functions.create_shape(properties.physics)
-            shape = functions.add_shape(SPACE, body, shape)
+            shape = functions.create_shape(properties.physics)
+            functions.add_shape(SPACE, shape.body, shape)
             PLAYER.shape = shape
             PLAYER.properties = properties
             PLAYER.shape.body.velocity_limit = SETTINGS.physics.limit
             PLAYER.collisions = 0
         else:
-            body, shape = functions.create_shape(properties.physics)
-            shape = functions.add_shape(SPACE, body, shape)
+            shape = functions.create_shape(properties.physics)
+            functions.add_shape(SPACE, shape.body, shape)
             SHAPES.append(functions.rebunch({
                 'shape': shape,
                 'properties': properties
@@ -124,9 +121,7 @@ def get_duration(keys_pressed, symbol):
 def on_draw():
     """Clear the window on every frame and draw in game objects."""
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-    gl.glColor3f(SETTINGS.graphics.background[0],
-                 SETTINGS.graphics.background[1],
-                 SETTINGS.graphics.background[2])
+    gl.glColor4f(*SETTINGS.graphics.background)
     WINDOW.clear()
     FPS.draw()
     functions.draw_shape(PLAYER.shape, PLAYER.properties)
@@ -148,3 +143,4 @@ def on_key_release(symbol, modifiers):
 
 if __name__ == '__main__':
     main()
+

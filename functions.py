@@ -8,71 +8,53 @@ def add_shape(space, body, shape):
     space.add(shape)
   else:
     space.add(body, shape)
-  return shape
 
 
 def create_shape(properties):
-  return globals()['create_' + properties.type](properties)
+  arguments = properties.body.copy()
+  arguments.update(properties.shape)
+  return globals()['create_' + properties.type](**arguments)
 
 
-def create_circle(properties):
-  moment = properties.body.moment
-  if properties.body.mass is not None and  moment is None:
-    moment = pymunk.moment_for_circle(properties.body.mass, 
-                                      0,
-                                      properties.shape.radius,
-                                      properties.shape.offset)
-  body = pymunk.Body(properties.body.mass, moment)
-  body.position = properties.body.position
-  shape = pymunk.Circle(body, properties.shape.radius, properties.shape.offset)
-  shape.elasticity = properties.shape.elasticity
-  shape.friction = properties.shape.friction
-  shape.collision_type = properties.shape.collision_type
-  return body, shape
+def create_circle(collision_type=None, elasticity=None, friction=None,
+                  mass=None, moment=None, offset=None, position=None, 
+                  radius=None, **extras):
+  if mass is not None and  moment is None:
+    moment = pymunk.moment_for_circle(mass, 0, radius, offset)
+  body = pymunk.Body(mass, moment)
+  body.position = position
+  shape = pymunk.Circle(body, radius, offset)
+  shape.elasticity = elasticity
+  shape.friction = friction
+  shape.collision_type = collision_type
+  return shape
 
 
-def create_poly(properties):
-  moment = properties.body.moment
-  if properties.body.mass is not None and moment is None:
-    moment = pymunk.moment_for_poly(properties.body.mass, 
-                                    properties.shape.vertices,
-                                    properties.shape.offset)
-  body = pymunk.Body(properties.body.mass, moment)
-  body.position = properties.body.position
-  shape = pymunk.Poly(body,
-                      properties.shape.vertices,
-                      properties.shape.offset,
-                      properties.shape.radius)
-  shape.elasticity = properties.shape.elasticity
-  shape.friction = properties.shape.friction
-  shape.collision_type = properties.shape.collision_type
-  return body, shape
+def create_poly(collision_type=None, elasticity=None, friction=None, mass=None,
+                moment=None, offset=None, position=None, radius=None, 
+                vertices=None, **extras):
+  if mass is not None and moment is None:
+    moment = pymunk.moment_for_poly(mass, vertices, offset)
+  body = pymunk.Body(mass, moment)
+  body.position = position
+  shape = pymunk.Poly(body, vertices, offset, radius)
+  shape.elasticity = elasticity
+  shape.friction = friction
+  shape.collision_type = collision_type
+  return shape
 
 
-def create_segment(properties):
-  moment = properties.body.moment
-  if properties.body.mass is not None and moment is None:
-    moment = pymunk.moment_for_segment(properties.body.mass, 
-                                      properties.shape.a,
-                                      properties.shape.b)
-  body = pymunk.Body(properties.body.mass, moment)
-  body.position = properties.body.position
-  shape = pymunk.Segment(body,
-                         properties.shape.a,
-                         properties.shape.b,
-                         properties.shape.radius)
-  shape.elasticity = properties.shape.elasticity
-  shape.friction = properties.shape.friction
-  shape.collision_type = properties.shape.collision_type
-  return body, shape
-
-
-def create_ray(parent, a, b):
-  moment = pymunk.moment_for_segment(1, a, b)
-  body = pymunk.Body(1, moment)
-  body.position = parent.position
-  shape = pymunk.Segment(body, a, b, 2)
-  shape.collision_type = 100
+def create_segment(a=None, b=None, collision_type=None, elasticity=None, 
+                   friction=None, mass=None, moment=None, position=None,
+                   radius=None, **extras):
+  if mass is not None and moment is None:
+    moment = pymunk.moment_for_segment(mass, a, b)
+  body = pymunk.Body(mass, moment)
+  body.position = position
+  shape = pymunk.Segment(body, a, b, radius)
+  shape.elasticity = elasticity
+  shape.friction = friction
+  shape.collision_type = collision_type
   return shape
 
 
