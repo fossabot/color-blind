@@ -1,4 +1,4 @@
-import helpers as functions
+import helpers
 import logging
 import pyglet
 import pyglet.gl as gl
@@ -7,7 +7,7 @@ import time
 import yaml
 
 
-SETTINGS = functions.rebunch(yaml.load(file('settings.yaml', 'r')))
+SETTINGS = helpers.rebunch(yaml.load(file('settings.yaml', 'r')))
 CONFIG = pyglet.gl.Config(
     sample_buffers=SETTINGS.graphics.opengl.sample_buffers,
     samples=SETTINGS.graphics.opengl.samples)
@@ -17,9 +17,9 @@ WINDOW = pyglet.window.Window(width=SETTINGS.graphics.window.width,
                               resizable=True)
 FPS = pyglet.clock.ClockDisplay()
 SPACE = pymunk.Space()
-BINDINGS = functions.rebunch({})
-PLAYER = functions.rebunch({})
-KEYS_PRESSED = functions.rebunch({})
+BINDINGS = helpers.rebunch({})
+PLAYER = helpers.rebunch({})
+KEYS_PRESSED = helpers.rebunch({})
 SHAPES = []
 
 
@@ -35,7 +35,7 @@ def main():
 def setup_bindings():
     """Load the key bindings from the configuration file."""
     for state in yaml.load(file(SETTINGS.paths.bindings, 'r'))['states']:
-        state = functions.rebunch(state)
+        state = helpers.rebunch(state)
         BINDINGS[state.name] = state
 
 
@@ -49,22 +49,22 @@ def setup_physics():
     SPACE.gravity = SETTINGS.physics.gravity
     objects = []
     for properties in yaml.load(file(SETTINGS.paths.objects, 'r'))['objects']:
-        objects.append(functions.rebunch(properties))
+        objects.append(helpers.rebunch(properties))
     for properties in objects:
         if properties.id == -1:
             logging.warning('attempt to create object with no id set')
         elif properties.id == 0:
             #TODO(mraxilus): remove, can identify player by id.
-            shape = functions.create_shape(properties.physics)
-            functions.add_shape(SPACE, shape.body, shape)
+            shape = helpers.create_shape(properties.physics)
+            helpers.add_shape(SPACE, shape.body, shape)
             PLAYER.shape = shape
             PLAYER.properties = properties
             PLAYER.shape.body.velocity_limit = SETTINGS.physics.limit
             PLAYER.collisions = 0
         else:
-            shape = functions.create_shape(properties.physics)
-            functions.add_shape(SPACE, shape.body, shape)
-            SHAPES.append(functions.rebunch({
+            shape = helpers.create_shape(properties.physics)
+            helpers.add_shape(SPACE, shape.body, shape)
+            SHAPES.append(helpers.rebunch({
                 'shape': shape,
                 'properties': properties
             }))
@@ -84,11 +84,13 @@ def update(dt):
     Keyword arguments:
     dt -- the change in time since the previously rendered frame
     """
-    if is_key_pressed(KEYS_PRESSED, BINDINGS.default.actions.left): 
+    duration = get_duration(KEYS_PRESSED, BINDINGS.default.actions.left) 
+    if duration is not None and PLAYER.collisions > 0:
         PLAYER.shape.body.apply_impulse(
             (PLAYER.properties.physics.impulse.left, 0),
             (0, PLAYER.shape.radius))
-    if is_key_pressed(KEYS_PRESSED, BINDINGS.default.actions.right): 
+    duration = get_duration(KEYS_PRESSED, BINDINGS.default.actions.right) 
+    if duration is not None and PLAYER.collisions > 0:
         PLAYER.shape.body.apply_impulse(
             (PLAYER.properties.physics.impulse.right, 0),
             (0, PLAYER.shape.radius))
@@ -124,9 +126,9 @@ def on_draw():
     gl.glColor4f(*SETTINGS.graphics.background)
     WINDOW.clear()
     FPS.draw()
-    functions.draw_shape(PLAYER.shape, PLAYER.properties)
+    helpers.draw_shape(PLAYER.shape, PLAYER.properties)
     for shape in SHAPES:
-        functions.draw_shape(shape.shape, shape.properties)
+        helpers.draw_shape(shape.shape, shape.properties)
 
 
 @WINDOW.event
