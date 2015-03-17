@@ -57,7 +57,7 @@ objects:
       body:
         <<: *base_physics_body
         mass: 1
-        position: !!python/tuple [640, 600]
+        position: !!python/tuple [640, 100]
       impulse:
         left: -10
         right: 10
