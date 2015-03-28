@@ -1,7 +1,7 @@
 aliases:
   - &base
       graphics: &base_graphics
-        color: !!python/tuple [0.5, 0.5, 0.5, 1]
+        color: !!python/tuple [0.2, 0.2, 0.2, 1]
       id: -1
       physics: &base_physics
         body: &base_physics_body
@@ -165,16 +165,255 @@ objects:
           - !!python/tuple [200, 360]
           - !!python/tuple [-200, 360]
 
-  # Line.
-  - <<: *segment
-    id: 6
+
+  # Platform 8.
+  - <<: *poly
+    id: 8
     physics:
-      <<: *segment_physics
+      <<: *poly_physics
       body:
         <<: *base_physics_body
-        position: !!python/tuple [800, 600]
+        position: !!python/tuple [600, 200]
       shape:
-        <<: *segment_physics_shape
-        a: !!python/tuple [-100, 50]
-        b: !!python/tuple [400, -200]
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-5, -5]
+          - !!python/tuple [5, -5]
+          - !!python/tuple [5, 5]
+          - !!python/tuple [-5, 5]
 
+  # Platform 9.
+  - <<: *poly
+    id: 9
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [600, 220]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-5, -5]
+          - !!python/tuple [5, -5]
+          - !!python/tuple [5, 5]
+          - !!python/tuple [-5, 5]
+
+  # Platform 10.
+  - <<: *poly
+    id: 10
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [600, 240]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-5, -5]
+          - !!python/tuple [5, -5]
+          - !!python/tuple [5, 5]
+          - !!python/tuple [-5, 5]
+
+  # Platform 11.
+  - <<: *poly
+    id: 11
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [640, 200]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-5, -5]
+          - !!python/tuple [5, -5]
+          - !!python/tuple [5, 5]
+          - !!python/tuple [-5, 5]
+
+  # Platform 12.
+  - <<: *poly
+    id: 12
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [760, 200]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-10, -10]
+          - !!python/tuple [10, -10]
+          - !!python/tuple [10, 10]
+          - !!python/tuple [-10, 10]
+            
+  # Platform 13.
+  - <<: *poly
+    id: 13
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [900, 200]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-10, -10]
+          - !!python/tuple [100, -10]
+          - !!python/tuple [100, 10]
+          - !!python/tuple [-10, 10]
+            
+  # Platform 14.
+  - <<: *poly
+    id: 14
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [850, 500]
+        mass: 1
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-10, -10]
+          - !!python/tuple [10, -10]
+          - !!python/tuple [10, 10]
+          - !!python/tuple [-10, 10]
+
+  # Platform 15.
+  - <<: *poly
+    id: 15
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1150, 500]
+        mass: 0.5
+        elasticity: 0.9
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-20, -20]
+          - !!python/tuple [20, -20]
+          - !!python/tuple [20, 20]
+          - !!python/tuple [-20, 20]
+
+  # Platform 16.
+  - <<: *poly
+    id: 16
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 115]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]
+
+  # Platform 17.
+  - <<: *poly
+    id: 17
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 110]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]
+
+  # Platform 18.
+  - <<: *poly
+    id: 18
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 105]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]
+
+  # Platform 19.
+  - <<: *poly
+    id: 19
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 100]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]
+            
+  # Platform 20.
+  - <<: *poly
+    id: 20
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 95]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]
+
+  # Platform 21.
+  - <<: *poly
+    id: 21
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 90]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]
+
+  # Platform 22.
+  - <<: *poly
+    id: 22
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [1100, 85]
+      shape:
+        <<: *poly_physics_shape
+        collision_type: 1
+        vertices:
+          - !!python/tuple [-2, -2]
+          - !!python/tuple [2, -2]
+          - !!python/tuple [2, 2]
+          - !!python/tuple [-2, 2]

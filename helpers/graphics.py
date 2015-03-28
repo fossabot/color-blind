@@ -66,3 +66,12 @@ def draw_line(a, b, color):
     gl.glEnd()
     gl.glPopMatrix()
 
+def draw_fan(center, vertices, color):
+    gl.glPushMatrix()
+    gl.glColor4f(*color)
+    gl.glBegin(gl.GL_TRIANGLE_FAN)
+    gl.glVertex2f(center[0], center[1])
+    for vertex in vertices:
+        gl.glVertex2f(vertex[0], vertex[1])
+    gl.glEnd()
+    gl.glPopMatrix()

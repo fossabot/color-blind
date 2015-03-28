@@ -49,6 +49,10 @@ def rebunch(dictionary):
     return dictionary
 
 
+def sort_clockwise(center, points):
+  return sorted(points, key=lambda p: math.atan2(p[1] - center[1], p[0] - center[0]))
+
+
 def rotate_point(center, point, theta):
   dx, dy = calculate_change(point, center)
   x = (dx * math.cos(theta)) - (dy * math.sin(theta))

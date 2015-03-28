@@ -14,7 +14,7 @@ CONFIG = pyglet.gl.Config(
 WINDOW = pyglet.window.Window(width=SETTINGS.graphics.window.width,
                               height=SETTINGS.graphics.window.height,
                               config=CONFIG)
-FPS = pyglet.clock.ClockDisplay()
+FPS = pyglet.clock.ClockDisplay(color=(0.2, 0.2, 0.2, 1))
 SPACE = pymunk.Space()
 BINDINGS = helpers.rebunch({})
 KEYS_PRESSED = helpers.rebunch({})
@@ -74,13 +74,13 @@ def update(dt):
     global POINTS
     duration = helpers.get_pressed_duration(KEYS_PRESSED,
                                             BINDINGS.default.actions.left) 
-    if duration is not None and SHAPES[0].collisions > 0:
+    if duration is not None:
         SHAPES[0].shape.body.apply_impulse(
             (SHAPES[0].properties.physics.impulse.left, 0),
             (0, SHAPES[0].shape.radius))
     duration = helpers.get_pressed_duration(KEYS_PRESSED,
                                             BINDINGS.default.actions.right) 
-    if duration is not None and SHAPES[0].collisions > 0:
+    if duration is not None:
         SHAPES[0].shape.body.apply_impulse(
             (SHAPES[0].properties.physics.impulse.right, 0),
             (0, SHAPES[0].shape.radius))
@@ -89,7 +89,7 @@ def update(dt):
         SHAPES[0].shape.body.apply_impulse(
             (0, SHAPES[0].properties.physics.impulse.up))
 
-    SHAPES[0].shape.body.angular_velocity *= SETTINGS.physics.damping
+    SHAPES[0].shape.body.angular_velocity = 0
 
     vertices = []
     for shape in SHAPES.values()[1:]:
@@ -116,6 +116,9 @@ def update(dt):
         intersections = map(lambda i: i.get_hit_point(), intersections)
         if len(intersections) > 1:
             POINTS.append(intersections[1])
+    POINTS = helpers.sort_clockwise(SHAPES[0].shape.body.position, POINTS)
+    start = POINTS[0]
+    POINTS.append(start)
 
     SPACE.step(dt)
 
@@ -126,11 +129,11 @@ def on_draw():
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glColor4f(*SETTINGS.graphics.background)
     WINDOW.clear()
+    helpers.draw_fan(SHAPES[0].shape.body.position, POINTS, (0.8, 0.3, 0.2, 1))
     FPS.draw()
     for id_, shape in SHAPES.items():
-        helpers.draw_shape(shape.shape, shape.properties)
-    for point in POINTS:
-        helpers.draw_line(SHAPES[0].shape.body.position, point, (0.7, 0.5, 0.5, 0.5))
+        if id_ == 0:
+            helpers.draw_shape(shape.shape, shape.properties)
 
 
 @WINDOW.event
