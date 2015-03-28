@@ -12,6 +12,7 @@ Resources
 - [pyglet programmer`s guide](http://www.pyglet.org/doc/programming_guide/index.html)
 - [pymunk API](http://pymunk.readthedocs.org/en/latest/pymunk.html)
 - [pybox2d manual](https://code.google.com/p/pybox2d/wiki/GettingStartedManual)
+- [Twisted example](https://twistedmatrix.com/trac/)
 
 License
 -------
