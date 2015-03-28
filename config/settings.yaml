@@ -12,6 +12,8 @@ physics:
   damping: 0.1
   limit: 300
   gravity: !!python/tuple [0.0, -500]
+  ray:
+    length: 1469 # diagonal length of window.
 
 paths:
   objects: config/objects.yaml

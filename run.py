@@ -92,7 +92,12 @@ def update(dt):
     SHAPES[0].shape.body.angular_velocity *= SETTINGS.physics.damping
     POINTS = []
     for shape in SHAPES.values()[1:]:
-        POINTS.extend(helpers.get_shape_points(shape.shape, shape.properties))
+        points = helpers.get_shape_points(shape.shape, shape.properties)
+        points = map(
+            lambda p: helpers.extend_point(SHAPES[0].shape.body.position,
+                                           p, SETTINGS.physics.ray.length), 
+            points)
+        POINTS.extend(points)
     SPACE.step(dt)
 
 

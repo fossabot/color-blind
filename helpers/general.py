@@ -1,6 +1,6 @@
 import bunch
 import graphics
-import numpy
+import math
 import physics
 
 
@@ -49,7 +49,25 @@ def rebunch(dictionary):
     return dictionary
 
 
+def extend_point(center, point, distance):
+  distance_old = calculate_distance(center, point)
+  x = point[0] + (((point[0] - center[0]) / distance_old) * (distance - distance_old))
+  y = point[1] + (((point[1] - center[1]) / distance_old) * (distance - distance_old))
+  return x, y
+
+
 def is_in_circle(center, point, radius):
-    dx, dy = abs(center[0] - point[0]), abs(center[1] - point[1])
-    return dx**2 + dy**2 <= radius**2
+    return calculate_distance(center, point) <= radius
+
+
+def calculate_slope(a, b):
+  dx, dy = calculate_change(a, b)
+  return dy / dx
+
+def calculate_change(a, b):
+  return a[0] - b[0], a[1] - b[1]
+
+
+def calculate_distance(a, b):
+  return math.hypot(*calculate_change(a, b))
   
