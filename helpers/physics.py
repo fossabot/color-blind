@@ -40,6 +40,11 @@ def create_segment(a=None, b=None, collision_type=None, elasticity=None,
   return _configure_shape(shape, elasticity, friction, collision_type)
 
 
+def get_intersections(space, center, point):
+  intersections = space.segment_query(center, point)
+  return sorted(intersections, key=lambda i: i.get_hit_distance())
+
+
 def _configure_shape(shape, elasticity, friction, collision_type):
   shape.elasticity = elasticity
   shape.friction = friction

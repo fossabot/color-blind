@@ -49,11 +49,15 @@ def rebunch(dictionary):
     return dictionary
 
 
-def extend_point(center, point, distance):
+def translate_point(center, point, distance):
   distance_old = calculate_distance(center, point)
   x = point[0] + (((point[0] - center[0]) / distance_old) * (distance - distance_old))
   y = point[1] + (((point[1] - center[1]) / distance_old) * (distance - distance_old))
   return x, y
+
+
+def is_in_range(a, b, radius):
+  return all(map(lambda (x, y): abs(x - y) < radius, zip(a, b)))
 
 
 def is_in_circle(center, point, radius):

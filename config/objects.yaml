@@ -67,7 +67,7 @@ objects:
         collision_type: 0
         elasticity: 0
 
-  # Platform 1 top.
+  # Platform 1.
   - <<: *poly
     id: 1
     physics:
@@ -177,5 +177,5 @@ objects:
         <<: *segment_physics_shape
         a: !!python/tuple [-100, 50]
         b: !!python/tuple [400, -200]
-        radius: 20
+        radius: 1
 

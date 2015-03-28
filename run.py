@@ -90,14 +90,29 @@ def update(dt):
             (0, SHAPES[0].properties.physics.impulse.up))
 
     SHAPES[0].shape.body.angular_velocity *= SETTINGS.physics.damping
-    POINTS = []
+
+    vertices = []
     for shape in SHAPES.values()[1:]:
-        points = helpers.get_shape_points(shape.shape, shape.properties)
-        points = map(
-            lambda p: helpers.extend_point(SHAPES[0].shape.body.position,
-                                           p, SETTINGS.physics.ray.length), 
-            points)
-        POINTS.extend(points)
+        coords = helpers.get_shape_points(shape.shape, shape.properties)
+        coords = map((lambda p:
+            helpers.translate_point(shape.shape.body.position, p,
+                helpers.calculate_distance(shape.shape.body.position, p) + 2)), coords)
+        coords_extended = map(
+            lambda p: helpers.translate_point(SHAPES[0].shape.body.position,
+                                              p, SETTINGS.physics.ray.length), 
+            coords)
+        vertices.extend(zip(coords, coords_extended))
+    POINTS = []
+    for point, point_extended in vertices:
+        intersections = helpers.get_intersections(
+            SPACE, SHAPES[0].shape.body.position, point_extended)
+        intersections = map(lambda i: i.get_hit_point(), intersections)
+        #intersections = filter(lambda i: not helpers.is_in_range(i, point, 2), intersections)
+        if len(intersections) > 1:
+            POINTS.append(intersections[1])
+        else:
+            POINTS.extend(intersections)
+
     SPACE.step(dt)
 
 
