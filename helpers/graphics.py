@@ -55,3 +55,14 @@ def draw_segment(shape, color):
     gl.glEnd()
     gl.glPopMatrix()
 
+
+def draw_line(a, b, color):
+    gl.glPushMatrix()
+    gl.glColor3f(color[0], color[1], color[2])
+    gl.glLineWidth(2)
+    gl.glBegin(gl.GL_LINES)
+    gl.glVertex2f(a[0], a[1])
+    gl.glVertex2f(b[0], b[1])
+    gl.glEnd()
+    gl.glPopMatrix()
+

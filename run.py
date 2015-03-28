@@ -19,6 +19,7 @@ SPACE = pymunk.Space()
 BINDINGS = helpers.rebunch({})
 KEYS_PRESSED = helpers.rebunch({})
 SHAPES = helpers.rebunch({})
+POINTS = []
 
 
 def main():
@@ -70,6 +71,7 @@ def update(dt):
     Keyword arguments:
     dt -- the change in time since the previously rendered frame
     """
+    global POINTS
     duration = helpers.get_pressed_duration(KEYS_PRESSED,
                                             BINDINGS.default.actions.left) 
     if duration is not None and SHAPES[0].collisions > 0:
@@ -88,6 +90,9 @@ def update(dt):
             (0, SHAPES[0].properties.physics.impulse.up))
 
     SHAPES[0].shape.body.angular_velocity *= SETTINGS.physics.damping
+    POINTS = []
+    for shape in SHAPES.values()[1:]:
+        POINTS.extend(helpers.get_shape_points(shape.shape, shape.properties))
     SPACE.step(dt)
 
 
@@ -100,6 +105,8 @@ def on_draw():
     FPS.draw()
     for id_, shape in SHAPES.items():
         helpers.draw_shape(shape.shape, shape.properties)
+    for point in POINTS:
+        helpers.draw_line(SHAPES[0].shape.body.position, point, (0.5, 0.5, 0.5, 0.5))
 
 
 @WINDOW.event

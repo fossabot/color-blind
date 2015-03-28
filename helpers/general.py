@@ -1,5 +1,6 @@
 import bunch
 import graphics
+import numpy
 import physics
 
 
@@ -14,11 +15,16 @@ def draw_shape(shape, properties):
 
 
 def get_shape_points(shape, properties):
-  getattr(graphics, 'get_shape_points_' + properties.physics.type)(shape, properties)
+  return globals()['get_shape_points_' + properties.physics.type](shape)
 
 
-def get_shape_points_segment(shape, properties):
-  pass
+def get_shape_points_segment(shape):
+  position, a, b = shape.body.position, shape.a, shape.b
+  return [map(sum, zip(position, a)), map(sum, zip(position, b))]
+
+
+def get_shape_points_poly(shape):
+  return shape.get_vertices()
 
 
 def filter_shapes_in_circle(center, shapes, radius):
