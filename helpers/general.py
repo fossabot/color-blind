@@ -10,7 +10,15 @@ def create_shape(properties):
 
 
 def draw_shape(shape, properties):
-  getattr(graphics, 'draw_' + properties.physics.type)(shape, properties)
+  getattr(graphics, 'draw_' + properties.physics.type)(shape, properties.graphics.color)
+
+
+def get_shape_points(shape, properties):
+  getattr(graphics, 'get_shape_points_' + properties.physics.type)(shape, properties)
+
+
+def get_shape_points_segment(shape, properties):
+  pass
 
 
 def filter_shapes_in_circle(center, shapes, radius):

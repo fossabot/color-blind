@@ -1,10 +1,9 @@
 import pyglet.gl as gl
 
 
-def draw_circle(shape, properties):
+def draw_circle(shape, color):
   position = shape.body.position
   radius = shape.radius
-  color = properties.graphics.color
   vertices = [(-radius, -radius),
               (-radius, radius),
               (radius, radius),
@@ -19,7 +18,7 @@ def draw_circle(shape, properties):
   gl.glPopMatrix()
 
 
-def draw_poly(shape, properties):
+def draw_poly(shape, color):
     """Draw a rectangle using OpenGL based on the provided spacial information.
 
     Keyword arguments:
@@ -30,7 +29,6 @@ def draw_poly(shape, properties):
     vertices = shape.verts
     position = shape.body.position
     angle = shape.body.angle
-    color = properties.graphics.color
     gl.glPushMatrix()
     gl.glColor3f(color[0], color[1], color[2])
     gl.glTranslatef(position[0], position[1], 0)
@@ -42,12 +40,11 @@ def draw_poly(shape, properties):
     gl.glPopMatrix()
 
 
-def draw_segment(shape, properties):
+def draw_segment(shape, color):
     position = shape.body.position
     a = shape.a
     b = shape.b
     radius = shape.radius
-    color = properties.graphics.color
     gl.glPushMatrix()
     gl.glColor3f(color[0], color[1], color[2])
     gl.glTranslatef(position[0], position[1], 0)
