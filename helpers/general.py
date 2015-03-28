@@ -13,6 +13,13 @@ def draw_shape(shape, properties):
   getattr(graphics, 'draw_' + properties.physics.type)(shape, properties)
 
 
+def filter_shapes_in_circle(center, shapes, radius):
+  return filter(lambda s: is_in_circle(center, s.shape.body.position, radius), shapes)
+
+
+# swiss.py
+
+
 def rebunch(dictionary):
     """Recursively convert a dictionary to a bunch.
 
@@ -27,3 +34,8 @@ def rebunch(dictionary):
             dictionary[key] = value
     return dictionary
 
+
+def is_in_circle(center, point, radius):
+    dx, dy = abs(center[0] - point[0]), abs(center[1] - point[1])
+    return dx**2 + dy**2 <= radius**2
+  

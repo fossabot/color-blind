@@ -88,10 +88,6 @@ def update(dt):
             (0, SHAPES[0].properties.physics.impulse.up))
 
     SHAPES[0].shape.body.angular_velocity *= SETTINGS.physics.damping
-    queries = SPACE.segment_query(SHAPES[0].shape.body.position, (1280, 720))
-    queries = sorted(queries, key=lambda x: x.t)
-    if queries is not None:
-        print(queries[1].get_hit_point())
     SPACE.step(dt)
 
 
