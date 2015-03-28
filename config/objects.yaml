@@ -177,5 +177,4 @@ objects:
         <<: *segment_physics_shape
         a: !!python/tuple [-100, 50]
         b: !!python/tuple [400, -200]
-        radius: 1
 

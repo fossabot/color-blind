@@ -49,6 +49,13 @@ def rebunch(dictionary):
     return dictionary
 
 
+def rotate_point(center, point, theta):
+  dx, dy = calculate_change(point, center)
+  x = (dx * math.cos(theta)) - (dy * math.sin(theta))
+  y = (dy * math.cos(theta)) + (dx * math.sin(theta))
+  return x + center[0], y + center[1]
+
+
 def translate_point(center, point, distance):
   distance_old = calculate_distance(center, point)
   x = point[0] + (((point[0] - center[0]) / distance_old) * (distance - distance_old))

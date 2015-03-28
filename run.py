@@ -94,24 +94,28 @@ def update(dt):
     vertices = []
     for shape in SHAPES.values()[1:]:
         coords = helpers.get_shape_points(shape.shape, shape.properties)
-        coords = map((lambda p:
-            helpers.translate_point(shape.shape.body.position, p,
-                helpers.calculate_distance(shape.shape.body.position, p) + 2)), coords)
-        coords_extended = map(
+        coords = map(
             lambda p: helpers.translate_point(SHAPES[0].shape.body.position,
                                               p, SETTINGS.physics.ray.length), 
             coords)
-        vertices.extend(zip(coords, coords_extended))
+        coords_right = map(
+            lambda p: helpers.rotate_point(SHAPES[0].shape.body.position,
+                                           p, 0.00001),
+            coords)
+        coords_left = map(
+            lambda p: helpers.rotate_point(SHAPES[0].shape.body.position,
+                                           p, -0.00001),
+            coords)
+        vertices.extend(coords)
+        vertices.extend(coords_right)
+        vertices.extend(coords_left)
     POINTS = []
-    for point, point_extended in vertices:
+    for point in vertices:
         intersections = helpers.get_intersections(
-            SPACE, SHAPES[0].shape.body.position, point_extended)
+            SPACE, SHAPES[0].shape.body.position, point)
         intersections = map(lambda i: i.get_hit_point(), intersections)
-        #intersections = filter(lambda i: not helpers.is_in_range(i, point, 2), intersections)
         if len(intersections) > 1:
             POINTS.append(intersections[1])
-        else:
-            POINTS.extend(intersections)
 
     SPACE.step(dt)
 
@@ -126,7 +130,7 @@ def on_draw():
     for id_, shape in SHAPES.items():
         helpers.draw_shape(shape.shape, shape.properties)
     for point in POINTS:
-        helpers.draw_line(SHAPES[0].shape.body.position, point, (0.5, 0.5, 0.5, 0.5))
+        helpers.draw_line(SHAPES[0].shape.body.position, point, (0.7, 0.5, 0.5, 0.5))
 
 
 @WINDOW.event
