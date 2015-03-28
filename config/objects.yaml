@@ -67,22 +67,38 @@ objects:
         collision_type: 0
         elasticity: 0
 
-  # Platform 1.
+  # Platform 1 top.
   - <<: *poly
     id: 1
     physics:
       <<: *poly_physics
       body:
         <<: *base_physics_body
-        position: !!python/tuple [245, 60]
+        position: !!python/tuple [245, 65]
       shape:
         <<: *poly_physics_shape
         collision_type: 1
         vertices:
-          - !!python/tuple [-240, -10]
-          - !!python/tuple [240, -10]
-          - !!python/tuple [240, 10]
-          - !!python/tuple [-240, 10]
+          - !!python/tuple [-240, -5]
+          - !!python/tuple [240, -5]
+          - !!python/tuple [240, 5]
+          - !!python/tuple [-240, 5]
+
+  # Platform 1 bottom.
+  - <<: *poly
+    id: 7
+    physics:
+      <<: *poly_physics
+      body:
+        <<: *base_physics_body
+        position: !!python/tuple [245, 55]
+      shape:
+        <<: *poly_physics_shape
+        vertices:
+          - !!python/tuple [-240, -5]
+          - !!python/tuple [240, -5]
+          - !!python/tuple [240, 5]
+          - !!python/tuple [-240, 5]
 
   # Floor.
   - <<: *poly
