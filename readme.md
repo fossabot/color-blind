@@ -9,9 +9,9 @@ Resources
 - [OpenGL Python tutorial](http://www.labri.fr/perso/nrougier/teaching/opengl/#introduction)
 - [OpenGL tutorial](https://open.gl/drawing)
 - [py-lepton particle engine](https://code.google.com/p/py-lepton/)
+- [pybox2d manual](https://code.google.com/p/pybox2d/wiki/GettingStartedManual)
 - [pyglet programmer`s guide](http://www.pyglet.org/doc/programming_guide/index.html)
 - [pymunk API](http://pymunk.readthedocs.org/en/latest/pymunk.html)
-- [pybox2d manual](https://code.google.com/p/pybox2d/wiki/GettingStartedManual)
 - [Twisted example](https://twistedmatrix.com/trac/)
 
 License
