@@ -1,5 +1,7 @@
-[color, blind][linkedin] ![GitHub version][version_badge] [![Build status][travis_image]][travis_status]
-========================================================================================================
+[color, blind][linkedin]
+========================
+![GitHub version][version_badge] [![Build status][travis_image]][travis_status]
+
 _Attempting video game development._
 
 Resources
