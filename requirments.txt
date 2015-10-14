@@ -1,0 +1,4 @@
+pyglet==1.2.4
+pymunk==4.0.0
+PyYAML==3.11
+wheel==0.24.0
