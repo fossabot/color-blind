@@ -9,7 +9,7 @@ import time
 import yaml
 
 
-SETTINGS = helpers.rebunch(yaml.load(file('config/settings.yaml', 'r')))
+SETTINGS = helpers.rebunch(yaml.load(open('config/settings.yaml', 'r')))
 CONFIG = pyglet.gl.Config(
     sample_buffers=SETTINGS.graphics.opengl.sample_buffers,
     samples=SETTINGS.graphics.opengl.samples)
@@ -35,7 +35,7 @@ def main():
 
 def setup_bindings():
     """Load the key bindings from the configuration file."""
-    for state in yaml.load(file(SETTINGS.paths.bindings, 'r'))['states']:
+    for state in yaml.load(open(SETTINGS.paths.bindings, 'r'))['states']:
         state = helpers.rebunch(state)
         BINDINGS[state.name] = state
 
@@ -49,7 +49,7 @@ def setup_physics():
     """Setup physics engine and initialise the world space."""
     SPACE.gravity = SETTINGS.physics.gravity
     objects = []
-    for properties in yaml.load(file(SETTINGS.paths.objects, 'r'))['objects']:
+    for properties in yaml.load(open(SETTINGS.paths.objects, 'r'))['objects']:
         objects.append(helpers.rebunch(properties))
     for properties in objects:
         if properties.id == -1:
