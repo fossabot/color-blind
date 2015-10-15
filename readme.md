@@ -1,6 +1,6 @@
-[color, blind][linkedin]
-========================
-![GitHub version][version_badge] [![Build status][travis_image]][travis_status]
+[color, blind][github_pages]
+============================
+[![GitHub version][github_badge]][github_tags]
 
 _Attempting video game development._
 
@@ -24,10 +24,9 @@ Copyright © Mr Axilus.
 This project is licensed under [CC BY-NC-SA 4.0][license].
 
 [.image/demo@700x409.gif]: http://raw.github.com/mraxilus/color-blind/master/image/demo@700x409.gif
+[github_badge]: https://img.shields.io/github/release/mraxilus/color-blind.svg
+[github_pages]: http://mr.axilus.name/color-blind/
+[github_tags]: https://github.com/mraxilus/color-blind/tags
 [license]: https://creativecommons.org/licenses/by-nc-sa/4.0/
-[linkedin]: https://www.linkedin.com/in/mraxilus
-[travis_image]: https://api.travis-ci.com/mraxilus/color-blind.svg?token=DZNuy3KTQRpnSN3J1cHq
-[travis_status]: https://magnum.travis-ci.com/mraxilus/color-blind
-[version_badge]: https://badge.fury.io/gh/mraxilus%2Fgit-auto.svg
 [youtube]: https://www.youtube.com/watch?v=8lFL8uePHMs
 
