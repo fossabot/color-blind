@@ -94,7 +94,7 @@ def update(dt):
     SHAPES[0].shape.body.angular_velocity = 0
 
     vertices = []
-    for shape in SHAPES.values()[1:]:
+    for shape in list(SHAPES.values())[1:]:
         coords = helpers.get_shape_points(shape.shape, shape.properties)
         coords = map(
             lambda p: helpers.translate_point(SHAPES[0].shape.body.position,
@@ -115,7 +115,7 @@ def update(dt):
     for point in vertices:
         intersections = helpers.get_intersections(
             SPACE, SHAPES[0].shape.body.position, point)
-        intersections = map(lambda i: i.get_hit_point(), intersections)
+        intersections = list(map(lambda i: i.get_hit_point(), intersections))
         if len(intersections) > 1:
             POINTS.append(intersections[1])
     POINTS = helpers.sort_clockwise(SHAPES[0].shape.body.position, POINTS)

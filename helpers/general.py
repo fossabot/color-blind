@@ -1,7 +1,7 @@
 import bunch
-from .graphics import *
+from . import graphics
 import math
-from .physics import *
+from . import physics 
 
 
 def create_shape(properties):
