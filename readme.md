@@ -23,7 +23,7 @@ License
 Copyright © Mr Axilus.
 This project is licensed under [CC BY-NC-SA 4.0][license].
 
-[.image/demo@700x409.gif]: http://raw.github.com/mraxilus/color-blind/master/image/image/demo@700x409.gif
+[.image/demo@700x409.gif]: http://raw.github.com/mraxilus/color-blind/master/image/demo@700x409.gif
 [license]: https://creativecommons.org/licenses/by-nc-sa/4.0/
 [linkedin]: https://www.linkedin.com/in/mraxilus
 [travis_image]: https://api.travis-ci.com/mraxilus/color-blind.svg?token=DZNuy3KTQRpnSN3J1cHq
