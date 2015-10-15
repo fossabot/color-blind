@@ -1,7 +1,7 @@
 import bunch
-import graphics
+from . import graphics
 import math
-import physics
+from . import physics 
 
 
 def create_shape(properties):
@@ -68,7 +68,7 @@ def translate_point(center, point, distance):
 
 
 def is_in_range(a, b, radius):
-  return all(map(lambda (x, y): abs(x - y) < radius, zip(a, b)))
+  return all(map(lambda x_y: abs(x_y[0] - x_y[1]) < radius, zip(a, b)))
 
 
 def is_in_circle(center, point, radius):

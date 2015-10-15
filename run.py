@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import helpers
 import logging
 import pyglet
@@ -7,7 +9,7 @@ import time
 import yaml
 
 
-SETTINGS = helpers.rebunch(yaml.load(file('config/settings.yaml', 'r')))
+SETTINGS = helpers.rebunch(yaml.load(open('config/settings.yaml', 'r')))
 CONFIG = pyglet.gl.Config(
     sample_buffers=SETTINGS.graphics.opengl.sample_buffers,
     samples=SETTINGS.graphics.opengl.samples)
@@ -33,7 +35,7 @@ def main():
 
 def setup_bindings():
     """Load the key bindings from the configuration file."""
-    for state in yaml.load(file(SETTINGS.paths.bindings, 'r'))['states']:
+    for state in yaml.load(open(SETTINGS.paths.bindings, 'r'))['states']:
         state = helpers.rebunch(state)
         BINDINGS[state.name] = state
 
@@ -47,7 +49,7 @@ def setup_physics():
     """Setup physics engine and initialise the world space."""
     SPACE.gravity = SETTINGS.physics.gravity
     objects = []
-    for properties in yaml.load(file(SETTINGS.paths.objects, 'r'))['objects']:
+    for properties in yaml.load(open(SETTINGS.paths.objects, 'r'))['objects']:
         objects.append(helpers.rebunch(properties))
     for properties in objects:
         if properties.id == -1:
@@ -92,7 +94,7 @@ def update(dt):
     SHAPES[0].shape.body.angular_velocity = 0
 
     vertices = []
-    for shape in SHAPES.values()[1:]:
+    for shape in list(SHAPES.values())[1:]:
         coords = helpers.get_shape_points(shape.shape, shape.properties)
         coords = map(
             lambda p: helpers.translate_point(SHAPES[0].shape.body.position,
@@ -113,7 +115,7 @@ def update(dt):
     for point in vertices:
         intersections = helpers.get_intersections(
             SPACE, SHAPES[0].shape.body.position, point)
-        intersections = map(lambda i: i.get_hit_point(), intersections)
+        intersections = list(map(lambda i: i.get_hit_point(), intersections))
         if len(intersections) > 1:
             POINTS.append(intersections[1])
     POINTS = helpers.sort_clockwise(SHAPES[0].shape.body.position, POINTS)
