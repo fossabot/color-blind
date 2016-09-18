@@ -1,5 +1,8 @@
-bunch==1.0.1
+cffi==1.8.3
+Cython==0.24.1
+esper==0.9.7
+pycapnp==0.5.9
+pycparser==2.14
 pyglet==1.2.4
-pymunk==4.0.0
-PyYAML==3.11
-wheel==0.24.0
+pymunk==5.0.0
+PyYAML==3.12

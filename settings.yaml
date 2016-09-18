@@ -1,0 +1,13 @@
+---
+graphics:
+    background: !!python/tuple [0.1, 0.1, 0.1, 1]
+    fps: 60.0
+    window:
+        width: 1280
+        height: 720
+physics:
+    damping: 0.1
+    limit: 300
+    gravity: !!python/tuple [0.0, -500]
+    ray:
+        length: 1469  # The diagonal length of the window.

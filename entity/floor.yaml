@@ -1,0 +1,26 @@
+---
+id: 1
+components:
+    - body:
+          mass: 1
+          moment: null
+          type: dynamic
+    - shape:
+          elasticity: 0
+          friction: 0.5
+          radius: 0
+          polygon:
+              vertices:
+                  - !!python/tuple [-240, -5]
+                  - !!python/tuple [240, -5]
+                  - !!python/tuple [240, 5]
+                  - !!python/tuple [-240, 5]
+    - position:
+          x: 245
+          y: 65
+          layer: 0
+    - color:
+          r: 0.2
+          g: 0.2
+          b: 0.2
+          a: 1
