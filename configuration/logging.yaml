@@ -27,7 +27,7 @@ handlers:
         backupCount: 20
         encoding: utf8
 loggers:
-    system:
+    my_module:
         level: ERROR
         handlers: [console]
         propagate: no
