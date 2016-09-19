@@ -7,9 +7,13 @@ components:
     - shape:
           elasticity: 0
           friction: 0.5
-          radius: 0
-          circle:
-              offset: !!python/list [0, 0]
+          radius: 1
+          polygon:
+              vertices:
+                  - [-20, -20]
+                  - [20, -20]
+                  - [20, 20]
+                  - [-20, 20]
     - position:
           x: 640
           y: 100

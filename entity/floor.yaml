@@ -2,18 +2,18 @@
 components:
     - body:
           mass: 1
-          moment: null
-          type: dynamic
+          moment: 0
+          type: static
     - shape:
           elasticity: 0
           friction: 0.5
-          radius: 0
+          radius: 1
           polygon:
               vertices:
-                  - !!python/tuple [-240, -5]
-                  - !!python/tuple [240, -5]
-                  - !!python/tuple [240, 5]
-                  - !!python/tuple [-240, 5]
+                  - [-240, -5]
+                  - [240, -5]
+                  - [240, 5]
+                  - [-240, 5]
     - position:
           x: 245
           y: 65

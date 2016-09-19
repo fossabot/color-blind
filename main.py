@@ -4,6 +4,7 @@
 import glob
 import logging.config
 import os
+from itertools import chain
 from typing import Dict, Tuple, List, Any, Union
 
 # Include third-party libraries.
@@ -24,7 +25,6 @@ logger = logging.getLogger(__name__)
 
 # Initialise global variables.
 CAPNP = {}
-COMPONENT = {}
 FPS_DISPLAY = None
 SETTING = DotMap(yaml.load(open("configuration/settings.yaml", "r")))
 WINDOW = pyglet.window.Window(
@@ -48,6 +48,7 @@ def setup_system() -> None:
     CAPNP = DotMap(import_components("component/*.capnp"))
     WORLD = esper.World()
     load_entity('player')
+    load_entity('floor')
 
 
 def import_components(glob_path: str) -> Dict[str, object]:
@@ -74,8 +75,13 @@ def load_entity(identifier: str) -> None:
 
 def get_component(name: str, values: dict={}) -> wrapper.Component:
     """Create an object wrapper around Cap'n Proto component schema."""
-    message = CAPNP[name].new_message(**values)
-    return getattr(wrapper, name.capitalize())(message)
+    try:
+        message = CAPNP[name].new_message(**values)
+        return getattr(wrapper, name.capitalize())(message)
+    except Exception as error:
+        logger.error("Attempted to create {0} message from {1}".format(name,
+                                                                       values))
+        raise error
 
 
 def setup_graphics() -> None:
@@ -95,8 +101,18 @@ def on_draw() -> None:
     """Draw on the window for each frame."""
     gl.glEnable(gl.GL_BLEND)
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-    gl.glClearColor(0.5, 0.5, 0.5, 1)
+    gl.glClearColor(*SETTING.graphics.background)
     WINDOW.clear()
+    for entity, (position, shape, color) in WORLD.get_components(
+            wrapper.Position, wrapper.Shape, wrapper.Color):
+        x, y = position.x, position.y
+        vertices = shape.polygon.vertices
+        vertices = map(lambda vertex: [vertex[0] + x, vertex[1] + y], vertices)
+        vertices = tuple(chain.from_iterable(vertices))
+        gl.glColor4f(color.r, color.g, color.b, color.a)
+        pyglet.graphics.draw(
+            len(shape.polygon.vertices), gl.GL_POLYGON, ('v2f', vertices))
+
     FPS_DISPLAY.draw()
 
 # Start the program execution.

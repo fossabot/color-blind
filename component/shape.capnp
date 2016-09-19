@@ -8,7 +8,7 @@ struct Shape {
         circle :group {
             offset @3 :List(Float64);
         }
-        polyon :group {
+        polygon :group {
             vertices @4 :List(List(Float64));
         }
         segment :group {
