@@ -3,6 +3,7 @@
 struct Body {
     mass @0 :Float64;
     moment @1 :Float64;
+    type @2 :Type;
     enum Type {
         dynamic @0;
         kinematic @1;

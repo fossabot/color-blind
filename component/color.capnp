@@ -1,8 +1,8 @@
 @0xa07a23e95cb2add4;
 
 struct Color {
-    r @0 :Int8;
-    g @1 :Int8;
-    b @2 :Int8;
-    a @3 :Int8;
+    r @0 :Float64;
+    g @1 :Float64;
+    b @2 :Float64;
+    a @3 :Float64;
 }

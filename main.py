@@ -15,23 +15,27 @@ import yaml
 from dotmap import DotMap
 from pyglet import gl
 
+# Include local libraries.
+from component import wrapper
+
 # Setup libraries.
 capnp.remove_import_hook()
 logger = logging.getLogger(__name__)
 
 # Initialise global variables.
 CAPNP = {}
+COMPONENT = {}
 FPS_DISPLAY = None
-SETTINGS = DotMap(yaml.load(open('configuration/settings.yaml', 'r')))
+SETTING = DotMap(yaml.load(open("configuration/settings.yaml", "r")))
 WINDOW = pyglet.window.Window(
-    width=SETTINGS.graphics.window.width,
-    height=SETTINGS.graphics.window.height)
+    width=SETTING.graphics.window.width, height=SETTING.graphics.window.height)
+WORLD = None
 
 
 def setup_logging(path: str, level: int=logging.INFO) -> None:
     """Setup and configure logging environments."""
     if os.path.exists(path):
-        with open(path, 'r') as handle:
+        with open(path, "r") as handle:
             config = yaml.safe_load(handle.read())
             logging.config.dictConfig(config)
     else:
@@ -40,8 +44,10 @@ def setup_logging(path: str, level: int=logging.INFO) -> None:
 
 def setup_system() -> None:
     """Setup entities, components, and systems."""
-    global CAPNP
-    CAPNP = import_components("component/*.capnp")
+    global CAPNP, WORLD
+    CAPNP = DotMap(import_components("component/*.capnp"))
+    WORLD = esper.World()
+    load_entity('player')
 
 
 def import_components(glob_path: str) -> Dict[str, object]:
@@ -50,8 +56,26 @@ def import_components(glob_path: str) -> Dict[str, object]:
     paths = glob.glob(glob_path)
     for path in paths:
         name = os.path.splitext(os.path.basename(path))[0]
-        components[name] = capnp.load(path)
+        structure = getattr(capnp.load(path), name.capitalize())
+        components[name] = structure
     return components
+
+
+def load_entity(identifier: str) -> None:
+    """Load an entity with its components from configuration file."""
+    global WORLD
+    contents = yaml.load(open("entity/{0}.yaml".format(identifier), "r"))
+    entity = WORLD.create_entity()
+    for item in contents['components']:
+        name, values = list(item.items())[0]
+        component = get_component(name, values)
+        WORLD.add_component(entity, component)
+
+
+def get_component(name: str, values: dict={}) -> wrapper.Component:
+    """Create an object wrapper around Cap'n Proto component schema."""
+    message = CAPNP[name].new_message(**values)
+    return getattr(wrapper, name.capitalize())(message)
 
 
 def setup_graphics() -> None:
@@ -59,6 +83,11 @@ def setup_graphics() -> None:
     global FPS_DISPLAY, WINDOW
     FPS_DISPLAY = pyglet.window.FPSDisplay(WINDOW)
     FPS_DISPLAY.label.color = (51, 51, 51, 255)
+
+
+def update(dt: float) -> None:
+    """Update the system based on the delta time."""
+    pass
 
 
 @WINDOW.event
@@ -69,17 +98,11 @@ def on_draw() -> None:
     gl.glClearColor(0.5, 0.5, 0.5, 1)
     WINDOW.clear()
     FPS_DISPLAY.draw()
-    pyglet.clock.tick()
-
-
-def update(dt: float) -> None:
-    """Update the system based on the delta time."""
-    pass
 
 # Start the program execution.
 if __name__ == "__main__":
     setup_logging("configuration/logging.yaml")
     setup_system()
     setup_graphics()
-    pyglet.clock.schedule_interval(update, 1 / SETTINGS.graphics.fps)
+    pyglet.clock.schedule_interval(update, 1 / SETTING.graphics.fps)
     pyglet.app.run()

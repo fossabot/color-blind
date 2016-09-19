@@ -1,16 +1,15 @@
 ---
-id: 0
 components:
     - body:
           mass: 1
-          moment: null
+          moment: 0
           type: dynamic
     - shape:
           elasticity: 0
           friction: 0.5
           radius: 0
           circle:
-              offset: !!python/tuple [0, 0]
+              offset: !!python/list [0, 0]
     - position:
           x: 640
           y: 100
