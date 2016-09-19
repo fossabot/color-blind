@@ -1,9 +1,9 @@
-@0x854f626adf4f2f1f
+@0x854f626adf4f2f1f;
 
-struct body {
+struct Body {
     mass @0 :Float64;
     moment @1 :Float64;
-    enum type {
+    enum Type {
         dynamic @0;
         kinematic @1;
         static @2;
