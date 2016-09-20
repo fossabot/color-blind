@@ -4,7 +4,7 @@
 
 _Attempting video game development._
 
-[![Demo][.readme/demo@700x409.gif]][youtube]
+[![Demo][./image/demo@700x409.gif]][youtube]
 
 Resources
 ---------

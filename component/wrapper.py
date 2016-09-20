@@ -13,7 +13,9 @@ class Component:
         try:
             return getattr(self.parent, name)
         except AttributeError:
-            logger.error("Attempt to get non-existent attribute from object.")
+            logger.error(
+                "Attempt to get non-existent attribute, {0}, from object.".
+                format(name))
 
 
 class Body(Component):
