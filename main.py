@@ -17,6 +17,7 @@ from dotmap import DotMap
 from pyglet import gl
 
 # Include local libraries.
+import processor.physics
 from component import wrapper
 
 # Setup libraries.
@@ -30,6 +31,15 @@ SETTING = DotMap(yaml.load(open("configuration/settings.yaml", "r")))
 WINDOW = pyglet.window.Window(
     width=SETTING.graphics.window.width, height=SETTING.graphics.window.height)
 WORLD = None
+
+
+def main() -> None:
+    """Setup and run the application."""
+    setup_logging("configuration/logging.yaml")
+    setup_system()
+    setup_graphics()
+    pyglet.clock.schedule_interval(WORLD.process, 1 / SETTING.graphics.fps)
+    pyglet.app.run()
 
 
 def setup_logging(path: str, level: int=logging.INFO) -> None:
@@ -47,8 +57,14 @@ def setup_system() -> None:
     global CAPNP, WORLD
     CAPNP = DotMap(import_components("component/*.capnp"))
     WORLD = esper.World()
+
+    #TODO(mraxilus): Load entities dynamically and store references.
     load_entity('player')
     load_entity('floor')
+
+    physics_processor = processor.physics.PhysicsProcessor(
+        SETTING.physics.gravity)
+    WORLD.add_processor(physics_processor)
 
 
 def import_components(glob_path: str) -> Dict[str, object]:
@@ -62,7 +78,7 @@ def import_components(glob_path: str) -> Dict[str, object]:
     return components
 
 
-def load_entity(identifier: str) -> None:
+def load_entity(identifier: str) -> int:
     """Load an entity with its components from configuration file."""
     global WORLD
     contents = yaml.load(open("entity/{0}.yaml".format(identifier), "r"))
@@ -71,6 +87,7 @@ def load_entity(identifier: str) -> None:
         name, values = list(item.items())[0]
         component = get_component(name, values)
         WORLD.add_component(entity, component)
+    return entity
 
 
 def get_component(name: str, values: dict={}) -> wrapper.Component:
@@ -86,39 +103,31 @@ def get_component(name: str, values: dict={}) -> wrapper.Component:
 
 def setup_graphics() -> None:
     """Setup graphical environment."""
-    global FPS_DISPLAY, WINDOW
+    global FPS_DISPLAY
+    gl.glEnable(gl.GL_BLEND)
+    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+    gl.glClearColor(*SETTING.graphics.background)
     FPS_DISPLAY = pyglet.window.FPSDisplay(WINDOW)
-    FPS_DISPLAY.label.color = (51, 51, 51, 255)
-
-
-def update(dt: float) -> None:
-    """Update the system based on the delta time."""
-    pass
+    FPS_DISPLAY.label.color = tuple(
+        map(lambda x: int(x * 255), SETTING.graphics.fps_color))
 
 
 @WINDOW.event
 def on_draw() -> None:
     """Draw on the window for each frame."""
-    gl.glEnable(gl.GL_BLEND)
-    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-    gl.glClearColor(*SETTING.graphics.background)
     WINDOW.clear()
     for entity, (position, shape, color) in WORLD.get_components(
             wrapper.Position, wrapper.Shape, wrapper.Color):
-        x, y = position.x, position.y
         vertices = shape.polygon.vertices
-        vertices = map(lambda vertex: [vertex[0] + x, vertex[1] + y], vertices)
+        vertices = map(
+            lambda vertex: [vertex[0] + position.x, vertex[1] + position.y],
+            vertices)
         vertices = tuple(chain.from_iterable(vertices))
         gl.glColor4f(color.r, color.g, color.b, color.a)
         pyglet.graphics.draw(
             len(shape.polygon.vertices), gl.GL_POLYGON, ('v2f', vertices))
-
     FPS_DISPLAY.draw()
 
 # Start the program execution.
 if __name__ == "__main__":
-    setup_logging("configuration/logging.yaml")
-    setup_system()
-    setup_graphics()
-    pyglet.clock.schedule_interval(update, 1 / SETTING.graphics.fps)
-    pyglet.app.run()
+    main()

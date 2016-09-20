@@ -5,7 +5,7 @@ components:
           moment: 0
           type: dynamic
     - shape:
-          elasticity: 0
+          elasticity: 0.5
           friction: 0.5
           radius: 1
           polygon:
@@ -16,7 +16,7 @@ components:
                   - [-20, 20]
     - position:
           x: 640
-          y: 100
+          y: 600
           layer: 0
     - color:
           r: 0.2

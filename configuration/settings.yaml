@@ -2,12 +2,13 @@
 graphics:
     background: [0.5, 0.5, 0.5, 1]
     fps: 60.0
+    fps_color: [0.2, 0.2, 0.2, 1]
     window:
         width: 1280
         height: 720
 physics:
     damping: 0.1
     limit: 300
-    gravity: [0.0, -500]
+    gravity: [0.0, -1000]
     ray:
         length: 1469  # The diagonal length of the window.

@@ -1,22 +1,22 @@
 ---
 components:
     - body:
-          mass: 1
+          mass: 0
           moment: 0
           type: static
     - shape:
-          elasticity: 0
+          elasticity: 0.5
           friction: 0.5
           radius: 1
           polygon:
               vertices:
-                  - [-240, -5]
-                  - [240, -5]
-                  - [240, 5]
-                  - [-240, 5]
+                  - [-640, -5]
+                  - [640, -5]
+                  - [640, 5]
+                  - [-640, 5]
     - position:
-          x: 245
-          y: 65
+          x: 640
+          y: 5
           layer: 0
     - color:
           r: 0.2
