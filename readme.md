@@ -1,6 +1,7 @@
 [color, blind][github_pages]
 ============================
 [![GitHub version][github_badge]][github_tags]
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmraxilus%2Fcolor-blind.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmraxilus%2Fcolor-blind?ref=badge_shield)
 
 _Attempting video game development._
 
@@ -30,3 +31,7 @@ This project is licensed under [CC BY-NC-SA 4.0][license].
 [license]: https://creativecommons.org/licenses/by-nc-sa/4.0/
 [youtube]: https://www.youtube.com/watch?v=8lFL8uePHMs
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmraxilus%2Fcolor-blind.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmraxilus%2Fcolor-blind?ref=badge_large)
